@@ -3,7 +3,9 @@ require('babel/register');
 
 var app = require('./server.js');
 
-const server = app.listen(3000, function() {
+app.set('port', process.env.PORT || 3000);
+
+const server = app.listen(app.get('port'), function() {
   const port = server.address().port;
 
   console.log('Example app listening at http://localhost:%s', port);
