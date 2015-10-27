@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/googol/drinkkiarkisto/issues"
   },
-  "homepage": "https://github.com/googol/drinkkiarkisto#readme"
+  "homepage": "https://github.com/googol/drinkkiarkisto#readme",
+  "dependencies": {
+    "babel": "^5.8.29",
+    "express": "^4.13.3"
+  }
 }
