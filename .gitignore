@@ -28,3 +28,8 @@ node_modules
 
 # Vagrant runtime files
 .vagrant/
+
+# Latex extra files
+*.aux
+*.pdf
+*.toc
