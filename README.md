@@ -1,4 +1,5 @@
-# drinkkiarkisto
+# drinkkiarkisto [![Build Status](https://travis-ci.org/googol/drinkkiarkisto.svg?branch=master)](https://travis-ci.org/googol/drinkkiarkisto) [![Dependency Status](https://david-dm.org/googol/drinkkiarkisto.svg)](https://david-dm.org/googol/drinkkiarkisto) [![Heroku](https://heroku-badge.herokuapp.com/?app=peaceful-scrubland-8625)](https://peaceful-scrubland-8625.herokuapp.com/)
+
 Tietokantasovellus-kurssin harjoitustyö
 
 ## Tehtävänanto
