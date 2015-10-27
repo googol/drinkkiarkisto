@@ -1,0 +1,18 @@
+{
+  "name": "drinkkiarkisto",
+  "version": "0.0.0",
+  "description": "Tietokantasovellus-harjoitustyö",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/googol/drinkkiarkisto.git"
+  },
+  "author": "Miika Hänninen",
+  "bugs": {
+    "url": "https://github.com/googol/drinkkiarkisto/issues"
+  },
+  "homepage": "https://github.com/googol/drinkkiarkisto#readme"
+}
