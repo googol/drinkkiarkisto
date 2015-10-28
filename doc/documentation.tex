@@ -7,8 +7,10 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\section{Intro}
-Tämä dokumentti tulee sisältämään projektin dokumentaation.
+\section{Johdanto}
+Tämän tietokantasovellus-harjoitustyön aiheena on drinkkiarkisto. Drinkkiarkiston tarkoitus on olla jokaisen kotibaarimestarin apuväline jolla löytää uudenlaisia juomia kokeiltavaksi, sekä palauttaa tuttujen drinkkien reseptit mieleen. Arkistosta kuka tahansa pystyy etsimään juomia esimerkiksi nimen, juomatyypin tai ainesosien perusteella. Kirjautuneet käyttäjät voivat luoda drinkkireseptejä ehdotuksiksi, jotka eivät näy suurelle yleisölle ennen kuin pääkäyttäjä on ne hyväksynyt.
 
-Nyt se on vielä pelkkää filleriä.
+Projekti toteutetaan javascriptillä käyttäen alustana nodejs:ää. Tietokantana toimii PostgreSQL. Web-frameworkina toimii express. Dokumentaatio kirjoitetaan latexilla. Sovellus ei vaadi käyttäjän selaimelta javascript-tukea. Sovelluksen kehittämisen helpottamiseksi projektille on vagrant-konfiguraatio. Vagrant luo virtuaalikoneen joka vastaa mahdollisimman paljon tuotantoympäristöä ja sisältää kaiken tarpeellisen sovelluksen ajamiseen. 
+
+Valmis ohjelmisto ajetaan herokussa. Jatkuvan integroinnin palvelu Travis kääntää uuden version ohjelmistosta aina kun githubiin pushataan uusi versio lähdekoodista, ja siirtää sen suoraan herokuun.
 \end{document}
