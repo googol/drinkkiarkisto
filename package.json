@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "build-doc": "pdflatex --output-directory=doc doc/documentation.tex && pdflatex --output-directory=doc doc/documentation.tex && mkdir -p public/doc && cp doc/documentation.pdf public/doc/"
+    "build-doc": "scripts/build-docs.sh"
   },
   "repository": {
     "type": "git",
