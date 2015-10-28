@@ -3,12 +3,12 @@
 import express from 'express';
 
 const app = express();
-const docPath = __dirname + '/doc';
+const publicPath = __dirname + '/public';
 
 app.get('/', function (req, res) {
   res.send('Drinkkiarkisto. Dokumentaatio: doc/documentation.pdf');
 });
 
-app.use('/doc', express.static(docPath));
+app.use('/', express.static(publicPath));
 
 export default app;
