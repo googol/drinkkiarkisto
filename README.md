@@ -9,4 +9,4 @@ Tämä harjoitustyö perustuu valmiiseen drinkkiarkisto-aiheeseen. Aiheen kuvaus
 Tämänhetkinen kehitysversio pyörii osoitteessa: https://peaceful-scrubland-8625.herokuapp.com/
 
 ## Dokumentaatio
-Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon](doc/dokumentaatio.pdf)
+Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://peaceful-scrubland-8625.herokuapp.com/doc/documentation.pdf)
