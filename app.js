@@ -1,7 +1,7 @@
 'use strict';
-require('babel/register');
+require('babel-core/register');
 
-var app = require('./server.js');
+var app = require('./server.js').default;
 
 app.set('port', process.env.PORT || 3000);
 
