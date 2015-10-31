@@ -1,6 +1,6 @@
 cd doc
 
-for i in {1..2};
+for i in $(seq 1 2);
 do
   pdflatex -shell-escape documentation.tex;
 done
