@@ -23,12 +23,7 @@ $configure_postgres = <<SCRIPT
 cp /vagrant/vagrant/pg_hba.conf /etc/postgresql/9.3/main/
 service postgresql reload
 
-sudo -u postgres -- psql template1 -c "CREATE ROLE vagrant"
-sudo -u postgres -- psql template1 -c "ALTER ROLE vagrant WITH LOGIN PASSWORD 'vagrant' NOSUPERUSER NOCREATEDB NOCREATEROLE"
-sudo -u postgres -- psql template1 -c "CREATE DATABASE vagrant OWNER vagrant"
-sudo -u postgres -- psql template1 -c "REVOKE ALL ON DATABASE vagrant FROM PUBLIC"
-sudo -u postgres -- psql template1 -c "GRANT CONNECT ON DATABASE vagrant TO vagrant"
-sudo -u postgres -- psql template1 -c "GRANT ALL ON DATABASE vagrant TO vagrant"
+sudo -u postgres -- psql template1 -f /vagrant/sql/create-database-and-user.sql
 SCRIPT
 
 # To enable global installations with npm without using sudo, change
