@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Tietokantasovellus-harjoitustyö",
   "main": "app.js",
+  "licence": "MIT",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 0",
