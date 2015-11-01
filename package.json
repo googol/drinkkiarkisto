@@ -25,7 +25,8 @@
     "express": "^4.13.3"
   },
   "engines": {
-    "node": "4.2.1"
+    "node": "5.0.0",
+    "npm": "3.3.10"
   },
   "babel": {
     "presets": [
