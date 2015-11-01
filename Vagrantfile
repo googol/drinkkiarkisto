@@ -12,7 +12,7 @@ SCRIPT
 # Installs absolute minimun for building/running
 $install_packages = <<SCRIPT
 curl --silent --location https://deb.nodesource.com/setup_5.x | sudo bash -
-apt-get install -y build-essential git postgresql nodejs texlive-latex-recommended texlive-fonts-recommended texlive-lang-finnish
+apt-get install --no-install-recommends -y build-essential git postgresql nodejs texlive-latex-recommended texlive-fonts-recommended texlive-lang-european
 
 npm install -g npm || exit 1
 SCRIPT
