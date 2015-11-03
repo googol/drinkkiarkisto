@@ -3,6 +3,6 @@ BEGIN;
   DROP TABLE drinkIngredients;
   DROP TABLE drinks;
   DROP TABLE ingredients;
-  DROP TABLE glassTypes;
   DROP TABLE drinkTypes;
+  DROP TABLE users;
 COMMIT;
