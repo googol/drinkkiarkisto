@@ -58,6 +58,7 @@ export_env_if_unset "LANG" "$locale"
 export_env_if_unset "LANGUAGE" "$locale"
 export_env_if_unset "LC_ALL" "$locale"
 export_env_if_unset "DATABASE_URL" "postgres://vagrant:vagrant@localhost/vagrant"
+export_env_if_unset "PGPASSWORD" "vagrant"
 
 if [ $(pwd) != "/vagrant" ]; then
   echo "cd /vagrant" >> "$profile_dir"
