@@ -15,16 +15,20 @@ app.get('/drinks', function(req, res) {
   res.redirect('/');
 });
 
-app.get('/drinks/:drinkId', function(req, res) {
-  const templateName = 'drink' + req.params.drinkId;
-  const templateFile = __dirname + '/views/' + templateName + '.ejs';
+app.route('/drinks/:drinkId')
+  .get(function(req, res) {
+    const templateName = (req.query.edit === undefined ? 'drink' : 'editdrink') + req.params.drinkId;
+    const templateFile = __dirname + '/views/' + templateName + '.ejs';
 
-  if (fs.existsSync(templateFile)) {
-    res.render(templateName);
-  } else {
-    res.sendStatus(404);
-  }
-});
+    if (fs.existsSync(templateFile)) {
+      res.render(templateName);
+    } else {
+      res.sendStatus(404);
+    }
+  })
+  .post(function(req, res) {
+    res.send('SAVED (not)');
+  });
 
 app.get('/register', function(req, res) {
   res.render('register');
