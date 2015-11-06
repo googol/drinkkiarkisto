@@ -34,19 +34,21 @@ app.get('/register', function(req, res) {
   res.render('register');
 });
 
-app.get('/login', function(req, res) {
-  res.render('login');
-});
-app.post('/login', function(req, res) {
-  res.redirect('/');
-});
+app.route('/login')
+  .get(function(req, res) {
+    res.render('login');
+  })
+  .post(function(req, res) {
+    res.redirect('/');
+  });
 
-app.get('/logout', function(req, res) {
-  res.render('logout');
-});
-app.post('/logout', function(req, res) {
-  res.redirect('/');
-});
+app.route('/logout')
+  .get(function(req, res) {
+    res.render('logout');
+  })
+  .post(function(req, res) {
+    res.redirect('/');
+  });
 
 app.get('/profile', function(req, res) {
   res.render('profile');
