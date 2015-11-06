@@ -1,14 +1,19 @@
 import express from 'express';
 import fs from 'fs';
+import Drinks from './server/drinks';
 
 const app = express();
 const publicPath = __dirname + '/public';
+const connectionString = process.env.DATABASE_URL;
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-  res.render('index');
+  const drinks = new Drinks(connectionString);
+  drinks.getAll().then(function(result) {
+    res.render('index', { drinks: result });
+  });
 });
 
 app.get('/drinks', function(req, res) {
