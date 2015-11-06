@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "build-doc": "scripts/build-docs.sh"
+    "build-doc": "scripts/build-docs.sh",
+    "sql": "scripts/run-sql.sh"
   },
   "repository": {
     "type": "git",
