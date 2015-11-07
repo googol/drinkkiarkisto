@@ -22,14 +22,16 @@ app.get('/drinks', function(req, res) {
 
 app.route('/drinks/:drinkId')
   .get(function(req, res) {
-    const templateName = (req.query.edit === undefined ? 'drink' : 'editdrink') + req.params.drinkId;
-    const templateFile = __dirname + '/views/' + templateName + '.ejs';
+    const templateName = req.query.edit === undefined ? 'drink' : 'editdrink';
 
-    if (fs.existsSync(templateFile)) {
-      res.render(templateName);
-    } else {
-      res.sendStatus(404);
-    }
+    const drinks = new Drinks(connectionString);
+    drinks.findById(req.params.drinkId).then(function(result) {
+      if (result) {
+        res.render(templateName, { drink: result });
+      } else {
+        res.sendStatus(404);
+      }
+    });
   })
   .post(function(req, res) {
     res.send('SAVED (not)');
