@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 Promise.promisifyAll(pg, { filter: function(methodName) { return methodName === 'connect'; }, multiArgs: true });
 Promise.promisifyAll(pg);
 
-function connect(connectionString) {
+export function connect(connectionString) {
   var close;
   return pg.connectAsync(connectionString)
     .spread(function(client, done) {
@@ -16,4 +16,9 @@ function connect(connectionString) {
     });
 }
 
-export default connect;
+export function sql(parts, ...values) {
+  return {
+    text: parts.reduce((previous, current, i) => previous + '$' + i + current),
+    values
+  };
+}
