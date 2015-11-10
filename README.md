@@ -23,3 +23,11 @@ Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sek�
   - Serverin tiedostot. Sisältää mm. data access -luokat
 - views/
   - Näkymät ejs-templateina
+- scripts/
+  - Apuriskriptejä kehitysympäristöön
+- vagrant/
+  - Konfiguraatiotiedostoja kehitysympäristöön
+- sql/
+  - Sql-skriptit mm. tietokannan, taulujen ja testidatan luontiin, sekä niiden poistamiseen
+- doc/
+  - Dokumentaation lähteet
