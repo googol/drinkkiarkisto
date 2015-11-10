@@ -10,3 +10,16 @@ Tämänhetkinen kehitysversio pyörii osoitteessa: https://peaceful-scrubland-86
 
 ## Dokumentaatio
 Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://peaceful-scrubland-8625.herokuapp.com/doc/documentation.pdf)
+
+## Kehitysympäristö
+Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sekä virtualbox, ja aja `vagrant up` projektikansiossa. Tämä luo virtuaalikoneen jossa voit ajaa ohjelmaa. Komennolla `vagrant ssh` saat yhteyden virtuaalikoneeseen, jossa voit komennolla `npm start` käynnistää serverin. Serveri on tavoitettavissa osoittessa http://localhost:3000/ niin virtuaalikoneella kuin hostilla.
+
+## Koodin rakenne
+- app.js
+  - Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin, sekä käynnistää itse serverin.
+- server.js
+  - Serverin päätiedosto. Konfiguroi serverin ja sen reitit.
+- server/
+  - Serverin tiedostot. Sisältää mm. data access -luokat
+- views/
+  - Näkymät ejs-templateina
