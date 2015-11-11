@@ -1,7 +1,7 @@
 'use strict';
 require('babel-core/register');
 
-var app = require('./server/server.js').default;
+var app = require('./src/server.js').default;
 
 const server = app.listen(app.get('port'), function() {
   const port = server.address().port;
