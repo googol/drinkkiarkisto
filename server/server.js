@@ -1,7 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import Drinks from './drinks';
-import Ingredients from './ingredients';
+import { Drinks, Ingredients } from './data';
 
 const app = express();
 const publicPath = __dirname + '/public';
