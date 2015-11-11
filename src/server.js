@@ -8,7 +8,7 @@ const connectionString = process.env.DATABASE_URL;
 
 app.set('port', process.env.PORT || 3000);
 
-app.set('views', __dirname + '/../views');
+app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {

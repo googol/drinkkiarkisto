@@ -25,7 +25,7 @@ Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sek�
   - Tietokantayhteyksien moduuli
 - src/data/
   - Tietokantayhteyksien luokat yksittäisissä tiedostoissa
-- views/
+- src/views/
   - Näkymät ejs-templateina
 - scripts/
   - Apuriskriptejä kehitysympäristöön
