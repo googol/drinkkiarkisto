@@ -18,9 +18,13 @@ Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sek�
 - app.js
   - Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin, sekä käynnistää itse serverin.
 - server/
-  - Serverin tiedostot. Sisältää mm. data access -luokat
+  - Serverin tiedostot.
 - server/server.js
   - Serverin päätiedosto. Konfiguroi serverin ja sen reitit.
+- server/data.js
+  - Tietokantayhteyksien moduuli
+- server/data/
+  - Tietokantayhteyksien luokat yksittäisissä tiedostoissa
 - views/
   - Näkymät ejs-templateina
 - scripts/
