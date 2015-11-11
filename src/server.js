@@ -78,4 +78,8 @@ app.get('/profile', function(req, res) {
 
 app.use('/', express.static(publicPath));
 
-export default app;
+const server = app.listen(app.get('port'), function() {
+  const port = server.address().port;
+
+  console.log('Drinkkiarkisto listening at http://localhost:%s', port);
+});

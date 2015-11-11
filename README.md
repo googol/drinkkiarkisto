@@ -20,7 +20,7 @@ Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sek�
 - src/
   - Serverin tiedostot.
 - src/server.js
-  - Serverin päätiedosto. Konfiguroi serverin ja sen reitit.
+  - Serverin päätiedosto. Konfiguroi serverin ja sen reitit ja käynnistää sen.
 - src/data.js
   - Tietokantayhteyksien moduuli
 - src/data/
