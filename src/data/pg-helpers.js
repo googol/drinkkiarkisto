@@ -20,6 +20,18 @@ export function connect(connectionString) {
     });
 }
 
+export function beginTransaction(client) {
+  return client.queryAsync('BEGIN');
+}
+
+export function commitTransaction(client) {
+  return client.queryAsync('COMMIT');
+}
+
+export function rollbackTransaction(client) {
+  return client.queryAsync('ROLLBACK');
+}
+
 /**
  * This is a tag for es6 style string expansion literals, that creates a parametrised sql query for the pg module.
  * Use like this: pgClient.Query(sql`SELECT * FROM table WHERE x=${y}`)

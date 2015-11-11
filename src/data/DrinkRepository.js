@@ -1,4 +1,4 @@
-import { connect, sql } from './pg-helpers'
+import { connect, sql, beginTransaction, rollbackTransaction, commitTransaction } from './pg-helpers'
 import Promise from 'bluebird';
 
 export class DrinkRepository {
@@ -52,6 +52,29 @@ export class DrinkRepository {
             ingredients: combined.ingredients
           };
         }, function(err) { return undefined; });
+    });
+  }
+
+  addDrink(drink) {
+    if (!drink.primaryName) {
+      return Promise.reject(new Error('The primary name of the drink is required.'));
+    } else if(!drink.preparation) {
+      return Promise.reject(new Error('The preparation instruction for the drink is required.'));
+    }
+    const ingredients = drink.ingredients || [];
+
+    return Promise.using(connect(this.connectionString), function(client) {
+      return beginTransaction(client)
+        .then(function() {
+          return client.queryAsync(sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, 1, 'true', 1) RETURNING id`)
+            .then(function(createResult) {
+              const drinkId = createResult.rows[0].id;
+
+              return Promise.all(ingredients.map(function(ingredient) { return client.queryAsync(sql`INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (${drinkId}, ${ingredient.id}, ${ingredient.amount})`); }));
+            });
+        })
+        .then(function(res) { return commitTransaction(client).return(res); }, 
+              function(err) { return rollbackTransaction(client).throw(err); });
     });
   }
 }
