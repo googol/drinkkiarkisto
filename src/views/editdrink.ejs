@@ -17,10 +17,10 @@
     <% if (locals.ingredients && locals.ingredients.length) { %>
     <%   locals.ingredients.forEach(function(ingredient) { %>
     <div class="form-group">
-      <label for="ingredient-1-amount" class="col-sm-2 control-label">Ainesosa: <%= ingredient.name %></label>
+      <label for="ingredient-<%= ingredient.id %>-amount" class="col-sm-2 control-label">Ainesosa: <%= ingredient.name %></label>
       <div class="col-sm-8">
         <div class="input-group">
-          <input type="number" id="ingredient-1-amount" class="form-control" aria-label="Ainesosan <%= ingredient.name %> määrä" value="<%= ingredient.amount %>">
+          <input type="number" id="ingredient-<%= ingredient.id %>-amount" class="form-control" aria-label="Ainesosan <%= ingredient.name %> määrä" value="<%= ingredient.amount %>">
           <span class="input-group-addon">ml</span>
         </div>
       </div>
