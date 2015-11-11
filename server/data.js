@@ -32,7 +32,7 @@ function sql(parts, ...values) {
   };
 }
 
-export class Drinks {
+export class DrinkRepository {
   constructor(connectionString) {
     this.connectionString = connectionString;
   }
@@ -87,7 +87,7 @@ export class Drinks {
   }
 }
 
-export class Ingredients {
+export class IngredientRepository {
   constructor(connectionString) {
     this.connectionString = connectionString;
   }
