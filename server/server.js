@@ -27,23 +27,22 @@ app.route('/drinks/:drinkId')
     const isEditMode = req.query.edit !== undefined;
 
     const drinks = new Drinks(connectionString);
-    drinks.findById(req.params.drinkId).then(function(result) {
-      if (!result) {
+    drinks.findById(req.params.drinkId).then(function(drink) {
+      if (!drink) {
         const err = new Error(`Could not find drink with id ${req.params.drinkId}`);
         err.statusCode = 404;
         throw err;
       }
 
-      if (isEditMode) {
-        const ingredients = new Ingredients(connectionString);
-        return ingredients.getAllWithAmountsForDrink(req.params.drinkId).then(function(resultIngredients) { return [result, resultIngredients]; });
-      } else {
-        return [result, undefined];
+      if (!isEditMode) {
+        return res.render('drink', { drink: drink });
       }
-    })
-    .spread(function(drink, ingredients) {
-      const templateName = isEditMode ? 'editdrink' : 'drink';
-      res.render(templateName, { drink: drink, ingredients: ingredients });
+
+      const ingredients = new Ingredients(connectionString);
+      return ingredients.getAllWithAmountsForDrink(req.params.drinkId)
+        .then(function(resultIngredients) {
+          res.render('editdrink', { drink: drink, ingredients: resultIngredients });
+        });
     })
     .catch(function(err) {
       res.status(err.statusCode || 500).send(err.toString());
