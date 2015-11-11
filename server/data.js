@@ -65,21 +65,23 @@ export class Drinks {
     return Promise.using(connect(this.connectionString), function(client) {
       return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientId, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks, drinkIngredients, ingredients WHERE drinkIngredients.drink = drinks.id AND drinkIngredients.ingredient = ingredients.id AND drinks.id=${id}`)
         .then(function(result) {
-          return result.rows.length > 0
-            ? result.rows.reduce(function(acc, currentRow) {
-              if (!acc) {
-                acc = {
-                  id: currentRow.id,
-                  primaryName: currentRow.primaryname,
-                  preparation: currentRow.preparation,
-                  ingredients: []
-                };
-              }
-              acc.ingredients.push({ id: currentRow.ingredientId, name: currentRow.ingredientname, amount: currentRow.amount });
+          if (result.rows.length === 0) {
+            return undefined;
+          }
+          const combined = result.rows.reduce(function(acc, currentRow) {
+            if (!acc.ingredients) {
+              acc.ingredients = [];
+            }
+            acc.ingredients.push({ id: currentRow.ingredientId, name: currentRow.ingredientname, amount: currentRow.amount });
 
-              return acc;
-            }, false)
-          : undefined;
+            return acc;
+          });
+          return {
+            id: combined.id,
+            primaryName: combined.primaryname,
+            preparation: combined.preparation,
+            ingredients: combined.ingredients
+          };
         }, function(err) { return undefined; });
     });
   }
