@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import Drinks from './server/drinks';
+import Ingredients from './server/ingredients';
 
 const app = express();
 const publicPath = __dirname + '/public';
@@ -24,15 +25,29 @@ app.get('/drinks', function(req, res) {
 
 app.route('/drinks/:drinkId')
   .get(function(req, res) {
-    const templateName = req.query.edit === undefined ? 'drink' : 'editdrink';
+    const isEditMode = req.query.edit !== undefined;
 
     const drinks = new Drinks(connectionString);
     drinks.findById(req.params.drinkId).then(function(result) {
-      if (result) {
-        res.render(templateName, { drink: result });
-      } else {
-        res.sendStatus(404);
+      if (!result) {
+        const err = new Error(`Could not find drink with id ${req.params.drinkId}`);
+        err.statusCode = 404;
+        throw err;
       }
+
+      if (isEditMode) {
+        const ingredients = new Ingredients(connectionString);
+        return ingredients.getAllWithAmountsForDrink(req.params.drinkId).then(function(resultIngredients) { return [result, resultIngredients]; });
+      } else {
+        return [result, undefined];
+      }
+    })
+    .spread(function(drink, ingredients) {
+      const templateName = isEditMode ? 'editdrink' : 'drink';
+      res.render(templateName, { drink: drink, ingredients: ingredients });
+    })
+    .catch(function(err) {
+      res.status(err.statusCode || 500).send(err.toString());
     });
   })
   .post(function(req, res) {
