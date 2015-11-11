@@ -15,8 +15,8 @@ Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://pe
 Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sekä virtualbox, ja aja `vagrant up` projektikansiossa. Tämä luo virtuaalikoneen jossa voit ajaa ohjelmaa. Komennolla `vagrant ssh` saat yhteyden virtuaalikoneeseen, jossa voit komennolla `npm start` käynnistää serverin. Serveri on tavoitettavissa osoittessa http://localhost:3000/ niin virtuaalikoneella kuin hostilla.
 
 ## Koodin rakenne
-- app.js
-  - Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin, sekä käynnistää itse serverin.
+- bootstrap.js
+  - Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin.
 - src/
   - Serverin tiedostot.
 - src/server.js

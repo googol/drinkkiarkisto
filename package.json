@@ -2,11 +2,11 @@
   "name": "drinkkiarkisto",
   "version": "0.0.0",
   "description": "Tietokantasovellus-harjoitustyö",
-  "main": "app.js",
+  "main": "bootstrap.js",
   "licence": "MIT",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 0",
     "build-doc": "scripts/build-docs.sh",
     "sql": "scripts/run-sql.sh"
