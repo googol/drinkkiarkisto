@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
-import Drinks from './server/drinks';
-import Ingredients from './server/ingredients';
+import Drinks from './drinks';
+import Ingredients from './ingredients';
 
 const app = express();
 const publicPath = __dirname + '/public';
@@ -9,7 +9,7 @@ const connectionString = process.env.DATABASE_URL;
 
 app.set('port', process.env.PORT || 3000);
 
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/../views');
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
