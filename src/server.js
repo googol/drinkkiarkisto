@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import { DrinkRepository, IngredientRepository } from './data';
+import { DrinksController } from './controllers'
 
 const app = express();
 const publicPath = __dirname + '/public';
@@ -11,11 +12,16 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-app.get('/', function(req, res) {
+function getDrinksController() {
   const drinkRepository = new DrinkRepository(connectionString);
-  drinkRepository.getAll().then(function(result) {
-    res.render('index', { drinks: result });
-  });
+  const ingredientRepository = new IngredientRepository(connectionString);
+  const drinksController = new DrinksController(drinkRepository, ingredientRepository);
+  return drinksController;
+}
+
+app.get('/', function(req, res) {
+  const drinksController = getDrinksController();
+  drinksController.showList(res);
 });
 
 app.route('/drinks')
@@ -23,47 +29,32 @@ app.route('/drinks')
     const isNewDrinkMode = req.query.new !== undefined;
 
     if (isNewDrinkMode) {
-      const ingredientRepo = new IngredientRepository(connectionString);
-      ingredientRepo.getAll()
-        .then(function(ingredients) {
-          res.render('newdrink', { ingredients: ingredients });
-        });
+      const drinksController = getDrinksController();
+      drinksController.showNewEditor(res);
     } else {
       res.redirect('/');
     }
   })
   .post(function(req, res) {
-    res.send('SAVED (not)');
+    const drinksController = getDrinksController();
+    drinksController.addNew('', '', [], res);
   });
 
 app.route('/drinks/:drinkId')
   .get(function(req, res) {
     const isEditMode = req.query.edit !== undefined;
+    const drinkId = req.params.drinkId;
+    const drinksController = getDrinksController();
 
-    const drinkRepository = new DrinkRepository(connectionString);
-    drinkRepository.findById(req.params.drinkId).then(function(drink) {
-      if (!drink) {
-        const err = new Error(`Could not find drink with id ${req.params.drinkId}`);
-        err.statusCode = 404;
-        throw err;
-      }
-
-      if (!isEditMode) {
-        return res.render('drink', { drink: drink });
-      }
-
-      const ingredientRepository = new IngredientRepository(connectionString);
-      return ingredientRepository.getAllWithAmountsForDrink(req.params.drinkId)
-        .then(function(resultIngredients) {
-          res.render('editdrink', { drink: drink, ingredients: resultIngredients });
-        });
-    })
-    .catch(function(err) {
-      res.status(err.statusCode || 500).send(err.toString());
-    });
+    if (isEditMode) {
+      drinksController.showSingleEditor(drinkId, res);
+    } else {
+      drinksController.showSingle(drinkId, res);
+    }
   })
   .post(function(req, res) {
-    res.send('SAVED (not)');
+    const drinksController = getDrinksController();
+    drinksController.updateSingle(0, '', '', [], res);
   });
 
 app.get('/register', function(req, res) {
