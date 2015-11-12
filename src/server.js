@@ -24,7 +24,8 @@ function getDrinksController() {
 
 const drinksController = getDrinksController();
 
-app.get('/', (req, res) => drinksController.showList(res));
+app.route('/')
+  .get((req, res) => drinksController.showList(res));
 
 app.route('/drinks')
   .get((req, res) => req.query.new !== undefined
@@ -38,7 +39,8 @@ app.route('/drinks/:drinkId')
     : drinksController.showSingle(req.params.drinkId, res))
   .post(urlencodedParser, (req, res) => drinksController.updateSingle(0, '', '', [], res));
 
-app.get('/register', (req, res) => res.render('register'));
+app.route('/register')
+  .get((req, res) => res.render('register'));
 
 app.route('/login')
   .get((req, res) => res.render('login'))
@@ -48,7 +50,8 @@ app.route('/logout')
   .get((req, res) => res.render('logout'))
   .post((req, res) => res.redirect('/'));
 
-app.get('/profile', (req, res) => res.render('profile'));
+app.route('/profile')
+  .get((req, res) => res.render('profile'));
 
 app.use('/', express.static(publicPath));
 
