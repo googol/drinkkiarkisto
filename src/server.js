@@ -18,9 +18,23 @@ app.get('/', function(req, res) {
   });
 });
 
-app.get('/drinks', function(req, res) {
-  res.redirect('/');
-});
+app.route('/drinks')
+  .get(function(req, res) {
+    const isNewDrinkMode = req.query.new !== undefined;
+
+    if (isNewDrinkMode) {
+      const ingredientRepo = new IngredientRepository(connectionString);
+      ingredientRepo.getAll()
+        .then(function(ingredients) {
+          res.render('newdrink', { ingredients: ingredients });
+        });
+    } else {
+      res.redirect('/');
+    }
+  })
+  .post(function(req, res) {
+    res.send('SAVED (not)');
+  });
 
 app.route('/drinks/:drinkId')
   .get(function(req, res) {
