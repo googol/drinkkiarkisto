@@ -22,8 +22,9 @@ function getDrinksController() {
   return drinksController;
 }
 
+const drinksController = getDrinksController();
+
 app.get('/', function(req, res) {
-  const drinksController = getDrinksController();
   drinksController.showList(res);
 });
 
@@ -32,14 +33,12 @@ app.route('/drinks')
     const isNewDrinkMode = req.query.new !== undefined;
 
     if (isNewDrinkMode) {
-      const drinksController = getDrinksController();
       drinksController.showNewEditor(res);
     } else {
       res.redirect('/');
     }
   })
   .post(urlencodedParser, function(req, res) {
-    const drinksController = getDrinksController();
     drinksController.addNew('', '', [], res);
   });
 
@@ -47,7 +46,6 @@ app.route('/drinks/:drinkId')
   .get(function(req, res) {
     const isEditMode = req.query.edit !== undefined;
     const drinkId = req.params.drinkId;
-    const drinksController = getDrinksController();
 
     if (isEditMode) {
       drinksController.showSingleEditor(drinkId, res);
@@ -56,7 +54,6 @@ app.route('/drinks/:drinkId')
     }
   })
   .post(urlencodedParser, function(req, res) {
-    const drinksController = getDrinksController();
     drinksController.updateSingle(0, '', '', [], res);
   });
 
