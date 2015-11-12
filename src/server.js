@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import bodyparser from 'body-parser'
 import { DrinkRepository, IngredientRepository } from './data';
 import { DrinksController } from './controllers'
 
@@ -11,6 +12,8 @@ app.set('port', process.env.PORT || 3000);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+
+var urlencodedParser = bodyparser.urlencoded({ extended: false });
 
 function getDrinksController() {
   const drinkRepository = new DrinkRepository(connectionString);
@@ -35,7 +38,7 @@ app.route('/drinks')
       res.redirect('/');
     }
   })
-  .post(function(req, res) {
+  .post(urlencodedParser, function(req, res) {
     const drinksController = getDrinksController();
     drinksController.addNew('', '', [], res);
   });
@@ -52,7 +55,7 @@ app.route('/drinks/:drinkId')
       drinksController.showSingle(drinkId, res);
     }
   })
-  .post(function(req, res) {
+  .post(urlencodedParser, function(req, res) {
     const drinksController = getDrinksController();
     drinksController.updateSingle(0, '', '', [], res);
   });
