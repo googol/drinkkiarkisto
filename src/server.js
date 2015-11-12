@@ -24,62 +24,31 @@ function getDrinksController() {
 
 const drinksController = getDrinksController();
 
-app.get('/', function(req, res) {
-  drinksController.showList(res);
-});
+app.get('/', (req, res) => drinksController.showList(res));
 
 app.route('/drinks')
-  .get(function(req, res) {
-    const isNewDrinkMode = req.query.new !== undefined;
-
-    if (isNewDrinkMode) {
-      drinksController.showNewEditor(res);
-    } else {
-      res.redirect('/');
-    }
-  })
-  .post(urlencodedParser, function(req, res) {
-    drinksController.addNew('', '', [], res);
-  });
+  .get((req, res) => req.query.new !== undefined
+      ? drinksController.showNewEditor(res)
+      : res.redirect('/'))
+  .post(urlencodedParser, (req, res) => drinksController.addNew('', '', [], res));
 
 app.route('/drinks/:drinkId')
-  .get(function(req, res) {
-    const isEditMode = req.query.edit !== undefined;
-    const drinkId = req.params.drinkId;
+  .get((req, res) => req.query.edit !== undefined
+    ? drinksController.showSingleEditor(req.params.drinkId, res)
+    : drinksController.showSingle(req.params.drinkId, res))
+  .post(urlencodedParser, (req, res) => drinksController.updateSingle(0, '', '', [], res));
 
-    if (isEditMode) {
-      drinksController.showSingleEditor(drinkId, res);
-    } else {
-      drinksController.showSingle(drinkId, res);
-    }
-  })
-  .post(urlencodedParser, function(req, res) {
-    drinksController.updateSingle(0, '', '', [], res);
-  });
-
-app.get('/register', function(req, res) {
-  res.render('register');
-});
+app.get('/register', (req, res) => res.render('register'));
 
 app.route('/login')
-  .get(function(req, res) {
-    res.render('login');
-  })
-  .post(function(req, res) {
-    res.redirect('/');
-  });
+  .get((req, res) => res.render('login'))
+  .post((req, res) => res.redirect('/'));
 
 app.route('/logout')
-  .get(function(req, res) {
-    res.render('logout');
-  })
-  .post(function(req, res) {
-    res.redirect('/');
-  });
+  .get((req, res) => res.render('logout'))
+  .post((req, res) => res.redirect('/'));
 
-app.get('/profile', function(req, res) {
-  res.render('profile');
-});
+app.get('/profile', (req, res) => res.render('profile'));
 
 app.use('/', express.static(publicPath));
 
