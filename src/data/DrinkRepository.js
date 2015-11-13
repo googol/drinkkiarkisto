@@ -1,6 +1,10 @@
 import { connect, sql, beginTransaction, rollbackTransaction, commitTransaction } from './pg-helpers'
 import Promise from 'bluebird';
 
+function getIngredientAmount(dbRow) {
+  return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };
+}
+
 export class DrinkRepository {
   constructor(connectionString) {
     this.connectionString = connectionString;
@@ -8,23 +12,24 @@ export class DrinkRepository {
 
   getAll() {
     return Promise.using(connect(this.connectionString), function(client) {
-      return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientId, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks, drinkIngredients, ingredients WHERE drinkIngredients.drink = drinks.id AND drinkIngredients.ingredient = ingredients.id')
+      return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id')
         .then(function(result) {
-          const transformed = result.rows.reduce(function(acc, currentRow) {
-            if (!acc.has(currentRow.id)) {
-              acc.set(currentRow.id, {
+          const transformed = new Map();
+          result.rows.forEach(function(currentRow) {
+            if (!transformed.has(currentRow.id)) {
+              transformed.set(currentRow.id, {
                 id: currentRow.id,
                 primaryName: currentRow.primaryname,
                 preparation: currentRow.preparation,
                 ingredients: []
               });
             }
-            const current = acc.get(currentRow.id);
+            const current = transformed.get(currentRow.id);
 
-            current.ingredients.push({ id: currentRow.ingredientId, name: currentRow.ingredientname, amount: currentRow.amount });
-
-            return acc;
-          }, new Map());
+            if (currentRow.ingredientid) {
+              current.ingredients.push(getIngredientAmount(currentRow));
+            }
+          });
           return Array.from(transformed.values());
         });
     });
