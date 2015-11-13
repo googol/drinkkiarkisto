@@ -20,16 +20,36 @@ export function connect(connectionString) {
     });
 }
 
+/**
+ * Helper function that removes the need to call Promise.using every time a db connection is needed.
+ * Use this for db connections if no other async resources are required.
+ */
+export function usingConnect(connectionString, handler) {
+  return Promise.using(connect(connectionString), handler);
+}
+
 export function beginTransaction(client) {
-  return client.queryAsync('BEGIN');
+  return client.queryAsync('BEGIN').return(client);
 }
 
 export function commitTransaction(client) {
-  return client.queryAsync('COMMIT');
+  return client.queryAsync('COMMIT').return(client);
 }
 
 export function rollbackTransaction(client) {
-  return client.queryAsync('ROLLBACK');
+  return client.queryAsync('ROLLBACK').return(client);
+}
+
+/**
+ * Helper function to simplify the usage of transactions.
+ * The handler function is executed inside a transaction.
+ */
+export function usingConnectTransaction(connectionString, handler) {
+  return usingConnect(connectionString, function(client) {
+    return beginTransaction(client)
+      .then(handler)
+      .then(res => commitTransaction(client).return(res), err => rollbackTransaction(client).throw(err));
+  });
 }
 
 /**

@@ -1,4 +1,4 @@
-import { connect, sql, beginTransaction, rollbackTransaction, commitTransaction } from './pg-helpers'
+import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
 import Promise from 'bluebird';
 
 function getIngredientAmount(dbRow) {
@@ -19,7 +19,7 @@ export class DrinkRepository {
   }
 
   getAll() {
-    return Promise.using(connect(this.connectionString), function(client) {
+    return usingConnect(this.connectionString, function(client) {
       return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id')
         .then(function(result) {
           const transformed = new Map();
@@ -44,7 +44,7 @@ export class DrinkRepository {
   }
 
   findById(id) {
-    return Promise.using(connect(this.connectionString), function(client) {
+    return usingConnect(this.connectionString, function(client) {
       return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`)
         .then(result => result.rows.length === 0
           ? undefined
@@ -66,15 +66,11 @@ export class DrinkRepository {
     }
     const ingredients = drink.ingredients || [];
 
-    return Promise.using(connect(this.connectionString), function(client) {
-      return beginTransaction(client)
-        .then(function() {
-          return client.queryAsync(getInsertDrinkSql(drink))
-            .then(createResult => createResult.rows[0].id)
-            .then(drinkId => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(drinkId, ingredient))))
-              .return(drinkId));
-        })
-        .then(res => commitTransaction(client).return(res), err => rollbackTransaction(client).throw(err));
+    return usingConnectTransaction(this.connectionString, function(client) {
+      return client.queryAsync(getInsertDrinkSql(drink))
+        .then(createResult => createResult.rows[0].id)
+        .then(drinkId => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(drinkId, ingredient))))
+          .return(drinkId));
     });
   }
 }
