@@ -43,6 +43,11 @@ export class DrinksController {
   }
 
   addNew(primaryName, preparation, ingredientAmounts, res) {
-    res.send('SAVED (not)');
+    if (!primaryName || !preparation) {
+      res.redirect('/drinks/?new');
+    } else {
+      this.drinkRepo.addDrink({ primaryName, preparation, ingredients: ingredientAmounts })
+        .then(drinkId => res.redirect(`/drinks/${drinkId}/`), err => res.status(500).send(err.toString() + '\n' + err.stack));
+    }
   }
 }

@@ -22,6 +22,12 @@ function getDrinksController() {
   return drinksController;
 }
 
+function getIngredientAmounts(body) {
+  return Object.keys(body)
+    .map(key => { const match = key.match(/ingredient-(\d+)-amount/); return match && { id: match[1], amount: body[match[0]] } || undefined })
+    .filter(value => value && value.amount);
+}
+
 const drinksController = getDrinksController();
 
 app.route('/')
@@ -31,7 +37,7 @@ app.route('/drinks')
   .get((req, res) => req.query.new !== undefined
       ? drinksController.showNewEditor(res)
       : res.redirect('/'))
-  .post(urlencodedParser, (req, res) => drinksController.addNew('', '', [], res));
+  .post(urlencodedParser, (req, res) => drinksController.addNew(req.body.drinkName, req.body.drinkPreparation, getIngredientAmounts(req.body), res));
 
 app.route('/drinks/:drinkId')
   .get((req, res) => req.query.edit !== undefined
