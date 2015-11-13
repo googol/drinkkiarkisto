@@ -37,26 +37,16 @@ export class DrinkRepository {
 
   findById(id) {
     return Promise.using(connect(this.connectionString), function(client) {
-      return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientId, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks, drinkIngredients, ingredients WHERE drinkIngredients.drink = drinks.id AND drinkIngredients.ingredient = ingredients.id AND drinks.id=${id}`)
-        .then(function(result) {
-          if (result.rows.length === 0) {
-            return undefined;
-          }
-          const combined = result.rows.reduce(function(acc, currentRow) {
-            if (!acc.ingredients) {
-              acc.ingredients = [];
-            }
-            acc.ingredients.push({ id: currentRow.ingredientId, name: currentRow.ingredientname, amount: currentRow.amount });
-
-            return acc;
-          });
-          return {
-            id: combined.id,
-            primaryName: combined.primaryname,
-            preparation: combined.preparation,
-            ingredients: combined.ingredients
-          };
-        }, function(err) { return undefined; });
+      return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount FROM drinks LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`)
+        .then(result => result.rows.length === 0
+          ? undefined
+          : {
+              id: result.rows[0].id,
+              primaryName: result.rows[0].primaryname,
+              preparation: result.rows[0].preparation,
+              ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
+            },
+          err => undefined);
     });
   }
 
