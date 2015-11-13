@@ -5,6 +5,14 @@ function getIngredientAmount(dbRow) {
   return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };
 }
 
+function getInsertDrinkSql(drink) {
+  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, 1, 'true', 1) RETURNING id`;
+}
+
+function getInsertDrinkIngredientSql(drinkId, ingredient) {
+  return sql`INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (${drinkId}, ${ingredient.id}, ${ingredient.amount})`;
+}
+
 export class DrinkRepository {
   constructor(connectionString) {
     this.connectionString = connectionString;
@@ -61,15 +69,12 @@ export class DrinkRepository {
     return Promise.using(connect(this.connectionString), function(client) {
       return beginTransaction(client)
         .then(function() {
-          return client.queryAsync(sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, 1, 'true', 1) RETURNING id`)
-            .then(function(createResult) {
-              const drinkId = createResult.rows[0].id;
-
-              return Promise.all(ingredients.map(function(ingredient) { return client.queryAsync(sql`INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (${drinkId}, ${ingredient.id}, ${ingredient.amount})`); }));
-            });
+          return client.queryAsync(getInsertDrinkSql(drink))
+            .then(createResult => createResult.rows[0].id)
+            .then(drinkId => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(drinkId, ingredient))))
+              .return(drinkId));
         })
-        .then(function(res) { return commitTransaction(client).return(res); }, 
-              function(err) { return rollbackTransaction(client).throw(err); });
+        .then(res => commitTransaction(client).return(res), err => rollbackTransaction(client).throw(err));
     });
   }
 }
