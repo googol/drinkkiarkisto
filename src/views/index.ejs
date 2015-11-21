@@ -4,11 +4,15 @@
   <p class="lead">Löydä suosikkidrinkkisi!</p>
   <div class="row">
     <% if (locals.drinks) { %>
-      <% locals.drinks.forEach(function(drink) { %>
-      <div class="col-md-4">
-        <% locals.drink = drink; %>
-        <% include drink %>
-      </div>
+      <% locals.drinks.forEach(function(drink, index, arr) { %>
+        <div class="col-md-4">
+          <% locals.drink = drink; %>
+          <% include drink %>
+        </div>
+        <% if (index !== 0 && index !== arr.length - 1 && (index + 1) % 3 === 0) { %>
+          </div>
+          <div class="row">
+        <% } %>
       <% }); %>
     <% } %>
   </div>
