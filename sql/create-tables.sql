@@ -25,13 +25,13 @@ BEGIN;
     writer integer NOT NULL REFERENCES users (id));
 
   CREATE TABLE drinkIngredients (
-    drink integer NOT NULL REFERENCES drinks (id),
+    drink integer NOT NULL REFERENCES drinks (id) ON DELETE CASCADE,
     ingredient integer NOT NULL REFERENCES ingredients (id),
     amount integer NOT NULL,
     PRIMARY KEY (drink, ingredient));
 
   CREATE TABLE additionalDrinkNames (
-    drink integer NOT NULL REFERENCES drinks (id),
+    drink integer NOT NULL REFERENCES drinks (id) ON DELETE CASCADE,
     name text NOT NULL,
     PRIMARY KEY (drink, name));
 COMMIT;
