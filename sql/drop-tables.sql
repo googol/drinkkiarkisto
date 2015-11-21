@@ -1,8 +1,8 @@
 BEGIN;
-  DROP TABLE additionalDrinkNames;
-  DROP TABLE drinkIngredients;
-  DROP TABLE drinks;
-  DROP TABLE ingredients;
-  DROP TABLE drinkTypes;
-  DROP TABLE users;
+  DROP TABLE IF EXISTS additionalDrinkNames;
+  DROP TABLE IF EXISTS drinkIngredients;
+  DROP TABLE IF EXISTS drinks;
+  DROP TABLE IF EXISTS ingredients;
+  DROP TABLE IF EXISTS drinkTypes;
+  DROP TABLE IF EXISTS users;
 COMMIT;
