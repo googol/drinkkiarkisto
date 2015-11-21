@@ -13,8 +13,9 @@ function findSingleDrinkOr404(drinkRepo, id) {
 }
 
 export class DrinksController {
-  constructor(drinkRepo, ingredientRepo) {
+  constructor(drinkRepo, drinkTypeRepo, ingredientRepo) {
     this.drinkRepo = drinkRepo;
+    this.drinkTypeRepo = drinkTypeRepo;
     this.ingredientRepo = ingredientRepo;
   }
 
@@ -34,19 +35,21 @@ export class DrinksController {
   }
 
   showNewEditor(res) {
-    this.ingredientRepo.getAll()
-      .then(ingredients => res.render('newdrink', { ingredients: ingredients }));
+    Promise.join(
+      this.ingredientRepo.getAll(),
+      this.drinkTypeRepo.getAll(),
+      (ingredients, drinkTypes) => res.render('newdrink', { ingredients: ingredients, drinkTypes: drinkTypes }));
   }
 
   updateSingle(id, primaryName, preparation, ingredientAmounts, res) {
     res.send('SAVED (not)');
   }
 
-  addNew(primaryName, preparation, ingredientAmounts, res) {
-    if (!primaryName || !preparation) {
+  addNew(drink, res) {
+    if (!drink.primaryName || !drink.preparation || !drink.type) {
       res.redirect('/drinks/?new');
     } else {
-      this.drinkRepo.addDrink({ primaryName, preparation, ingredients: ingredientAmounts })
+      this.drinkRepo.addDrink(drink)
         .then(drinkId => res.redirect(`/drinks/${drinkId}/`), err => res.status(500).send(err.toString() + '\n' + err.stack));
     }
   }

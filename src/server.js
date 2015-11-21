@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import bodyparser from 'body-parser'
-import { DrinkRepository, IngredientRepository } from './data';
+import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
 import { DrinksController } from './controllers'
 
 const app = express();
@@ -17,8 +17,9 @@ var urlencodedParser = bodyparser.urlencoded({ extended: false });
 
 function getDrinksController() {
   const drinkRepository = new DrinkRepository(connectionString);
+  const drinkTypeRepository = new DrinkTypeRepository(connectionString);
   const ingredientRepository = new IngredientRepository(connectionString);
-  const drinksController = new DrinksController(drinkRepository, ingredientRepository);
+  const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
   return drinksController;
 }
 
@@ -37,7 +38,7 @@ app.route('/drinks')
   .get((req, res) => req.query.new !== undefined
       ? drinksController.showNewEditor(res)
       : res.redirect('/'))
-  .post(urlencodedParser, (req, res) => drinksController.addNew(req.body.drinkName, req.body.drinkPreparation, getIngredientAmounts(req.body), res));
+  .post(urlencodedParser, (req, res) => drinksController.addNew({ primaryName: req.body.drinkName, preparation: req.body.drinkPreparation, ingredients: getIngredientAmounts(req.body), type: req.body.drinkType }, res));
 
 app.route('/drinks/:drinkId')
   .get((req, res) => req.query.edit !== undefined

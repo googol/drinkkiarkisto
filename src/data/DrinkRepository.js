@@ -6,7 +6,7 @@ function getIngredientAmount(dbRow) {
 }
 
 function getInsertDrinkSql(drink) {
-  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, 1, 'true', 1) RETURNING id`;
+  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type}, 'true', 1) RETURNING id`;
 }
 
 function getInsertDrinkIngredientSql(drinkId, ingredient) {

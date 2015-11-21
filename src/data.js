@@ -3,4 +3,5 @@
  */
 
 export { DrinkRepository } from './data/DrinkRepository'
+export { DrinkTypeRepository } from './data/DrinkTypeRepository'
 export { IngredientRepository } from './data/IngredientRepository'

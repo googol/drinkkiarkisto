@@ -14,6 +14,16 @@
         <textarea rows="2" class="form-control" id="drinkPreparation" name="drinkPreparation"></textarea>
       </div>
     </div>
+    <div class="form-group">
+      <label for="drinkType" class="col-sm-2 control-label">Tyyppi</label>
+      <div class="col-sm-8">
+        <select id="drinkType" name="drinkType" class="form-control">
+          <% locals.drinkTypes.forEach(function(drinkType) { %>
+          <option value="<%= drinkType.id %>"><%= drinkType.name %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
     <% if (locals.ingredients && locals.ingredients.length) { %>
     <%   locals.ingredients.forEach(function(ingredient) { %>
     <div class="form-group">
