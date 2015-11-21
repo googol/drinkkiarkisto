@@ -75,4 +75,10 @@ export class DrinkRepository {
           .return(drinkId));
     });
   }
+
+  deleteById(id) {
+    return usingConnect(this.connectionString, function(client) {
+      return client.queryAsync(sql`DELETE FROM drinks WHERE id=${id}`);
+    });
+  }
 }

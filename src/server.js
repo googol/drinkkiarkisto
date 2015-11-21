@@ -44,7 +44,10 @@ app.route('/drinks/:drinkId')
   .get((req, res) => req.query.edit !== undefined
     ? drinksController.showSingleEditor(req.params.drinkId, res)
     : drinksController.showSingle(req.params.drinkId, res))
-  .post(urlencodedParser, (req, res) => drinksController.updateSingle(0, '', '', [], res));
+  .post(urlencodedParser, (req, res) => req.body.delete !== undefined
+    ? drinksController.deleteSingle(req.body.id, res)
+    : drinksController.updateSingle(0, '', '', [], res))
+  .delete(urlencodedParser, (req, res) => drinksController.deleteSingle(req.body.id, res));
 
 app.route('/register')
   .get((req, res) => res.render('register'));

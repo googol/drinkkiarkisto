@@ -53,4 +53,9 @@ export class DrinksController {
         .then(drinkId => res.redirect(`/drinks/${drinkId}/`), err => res.status(500).send(err.toString() + '\n' + err.stack));
     }
   }
+
+  deleteSingle(id, res) {
+    this.drinkRepo.deleteById(id)
+      .then(drinkId => res.redirect('/'), err => res.status(err.statusCode || 500).send(err.toString() + '\n' + err.stack));
+  }
 }
