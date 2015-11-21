@@ -23,7 +23,7 @@ export class DrinksController {
   }
 
   showSingle(id, res) {
-    findSingleDrinkOr404(this.drinkRepo, id).then(drink => res.render('drink', { drink: drink }), err => res.status(err.statusCode || 500).send(err.toString()));
+    findSingleDrinkOr404(this.drinkRepo, id).then(drink => res.render('singledrink', { drink: drink }), err => res.status(err.statusCode || 500).send(err.toString()));
   }
 
   showSingleEditor(id, res) {

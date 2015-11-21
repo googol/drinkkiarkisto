@@ -1,37 +1,15 @@
 <% include head %>
-<% function formatAmount(amount) {
-     if (amount % 1000 === 0) {
-       return (amount / 1000) + ' l';
-     } else if (amount % 100 === 0) {
-       return (amount / 100) + ' dl';
-     } else if (amount % 10 === 0) {
-       return (amount / 10) + ' cl';
-     } else {
-       return amount + ' ml';
-     }
-   } %>
 <div class="container">
   <h1>Drinkkiarkisto</h1>
   <p class="lead">Löydä suosikkidrinkkisi!</p>
   <div class="row">
     <% if (locals.drinks) { %>
-    <%   locals.drinks.forEach(function(drink) { %>
-    <div class="col-md-4">
-      <h2><a href="/drinks/<%= drink.id %>/"><%= drink.primaryName %></a></h2>
-      <div class="row">
-        <div class="col-md-6">
-          <p><%= drink.preparation %></p>
-        </div>
-        <div class="col-md-6">
-          <ul>
-            <% drink.ingredients.forEach(function(ingredient) { %>
-            <li><%= formatAmount(ingredient.amount); %> <%= ingredient.name %></li>
-            <% }); %>
-          </ul>
-        </div>
+      <% locals.drinks.forEach(function(drink) { %>
+      <div class="col-md-4">
+        <% locals.drink = drink; %>
+        <% include drink %>
       </div>
-    </div>
-    <%   }); %>
+      <% }); %>
     <% } %>
   </div>
   <p><a href="/drinks/?new" class="btn btn-default btn-xs">Lisää uusi drinkki</a></p>

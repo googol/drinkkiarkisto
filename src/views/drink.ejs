@@ -1,4 +1,3 @@
-<% include head %>
 <% function formatAmount(amount) {
      if (amount % 1000 === 0) {
        return (amount / 1000) + ' l';
@@ -10,19 +9,16 @@
        return amount + ' ml';
      }
    } %>
-<div class="container">
-  <h1><a href="/drinks/<%= locals.drink.id %>/"><%= locals.drink.primaryName %></a> <small><a href="/drinks/<%= locals.drink.id %>?edit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil" /></a></small></h1>
-  <div class="row">
-    <div class="col-md-6">
-      <p><%= locals.drink.preparation %></p>
-    </div>
-    <div class="col-md-6">
-      <ul>
-        <% locals.drink.ingredients.forEach(function(ingredient) { %>
-        <li><%= formatAmount(ingredient.amount) %> <%= ingredient.name %></li>
-        <% }); %>
-      </ul>
-    </div>
+<h1><a href="/drinks/<%= locals.drink.id %>/"><%= locals.drink.primaryName %></a> <small><a href="/drinks/<%= locals.drink.id %>?edit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil" /></a></small></h1>
+<div class="row">
+  <div class="col-md-6">
+    <p><%= locals.drink.preparation %></p>
+  </div>
+  <div class="col-md-6">
+    <ul>
+      <% locals.drink.ingredients.forEach(function(ingredient) { %>
+      <li><%= formatAmount(ingredient.amount) %> <%= ingredient.name %></li>
+      <% }); %>
+    </ul>
   </div>
 </div>
-<% include foot %>
