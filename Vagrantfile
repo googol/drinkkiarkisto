@@ -22,8 +22,6 @@ SCRIPT
 $configure_postgres = <<SCRIPT
 cp /vagrant/vagrant/pg_hba.conf /etc/postgresql/9.3/main/
 service postgresql reload
-
-sudo -u postgres -- psql template1 -f /vagrant/sql/create-database-and-user.sql
 SCRIPT
 
 # To enable global installations with npm without using sudo, change
@@ -70,8 +68,13 @@ SCRIPT
 $install_project = <<SCRIPT
 cd /vagrant
 
+rm -rf node_modules
 npm install || exit 1
 
+sudo -u postgres -- psql template1 -f /vagrant/sql/drop-database-and-user.sql
+sudo -u postgres -- psql template1 -f /vagrant/sql/create-database-and-user.sql
+PGPASSWORD=vagrant psql vagrant vagrant -f /vagrant/sql/create-tables.sql
+PGPASSWORD=vagrant psql vagrant vagrant -f /vagrant/sql/add-test-data.sql
 exit 0
 SCRIPT
 
