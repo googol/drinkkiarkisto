@@ -15,9 +15,10 @@ function formatAmount(amount) {
   <a href="/drinks/<%= locals.drink.id %>/"><%= locals.drink.primaryName %></a>
   <div class="btn-group">
     <a href="/drinks/<%= locals.drink.id %>/?edit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil" /></a>
-    <form class="btn-group" action="/drinks/<%= locals.drink.id %>/" method="post">
-      <input type="hidden" name="delete" value="delete" />
-      <button name="id" value="<%= locals.drink.id %>" type="submit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove" /></button>
+    <form class="btn-group" action="/drinks/<%= locals.drink.id %>/?_method=delete" method="post">
+      <button name="id" value="<%= locals.drink.id %>" type="submit" class="btn btn-default btn-xs">
+        <span class="glyphicon glyphicon-remove" />
+      </button>
     </form>
   </div>
 </h1>

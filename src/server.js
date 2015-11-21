@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import bodyparser from 'body-parser'
+import methodOverride from 'method-override'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
 import { DrinksController } from './controllers'
 
@@ -12,6 +13,8 @@ app.set('port', process.env.PORT || 3000);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+
+app.use(methodOverride('_method'));
 
 var urlencodedParser = bodyparser.urlencoded({ extended: false });
 
@@ -44,9 +47,7 @@ app.route('/drinks/:drinkId')
   .get((req, res) => req.query.edit !== undefined
     ? drinksController.showSingleEditor(req.params.drinkId, res)
     : drinksController.showSingle(req.params.drinkId, res))
-  .post(urlencodedParser, (req, res) => req.body.delete !== undefined
-    ? drinksController.deleteSingle(req.body.id, res)
-    : drinksController.updateSingle(0, '', '', [], res))
+  .post(urlencodedParser, (req, res) => drinksController.updateSingle(0, '', '', [], res))
   .delete(urlencodedParser, (req, res) => drinksController.deleteSingle(req.body.id, res));
 
 app.route('/register')
