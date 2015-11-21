@@ -14,7 +14,10 @@ function formatAmount(amount) {
 <h1><a href="/drinks/<%= locals.drink.id %>/"><%= locals.drink.primaryName %></a> <small><a href="/drinks/<%= locals.drink.id %>?edit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil" /></a></small></h1>
 <div class="row">
   <div class="col-md-6">
-    <p><%= locals.drink.preparation %></p>
+    <p>
+      <strong><%= locals.drink.type %></strong><br/>
+      <%= locals.drink.preparation %>
+    </p>
   </div>
   <div class="col-md-6">
     <ul>
