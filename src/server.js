@@ -32,6 +32,15 @@ function getIngredientAmounts(body) {
     .filter(value => value && value.amount);
 }
 
+function getDrinkFromRequestBody(body) {
+  return {
+    primaryName: body.drinkName,
+    preparation: body.drinkPreparation,
+    ingredients: getIngredientAmounts(body),
+    type: body.drinkType
+  };
+}
+
 const drinksController = getDrinksController();
 
 app.route('/')
@@ -41,7 +50,7 @@ app.route('/drinks')
   .get((req, res) => req.query.new !== undefined
       ? drinksController.showNewEditor(res)
       : res.redirect('/'))
-  .post(urlencodedParser, (req, res) => drinksController.addNew({ primaryName: req.body.drinkName, preparation: req.body.drinkPreparation, ingredients: getIngredientAmounts(req.body), type: req.body.drinkType }, res));
+  .post(urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
 
 app.route('/drinks/:drinkId')
   .get((req, res) => req.query.edit !== undefined
