@@ -43,7 +43,12 @@ export class DrinksController {
   }
 
   updateSingle(id, drink, res) {
-    res.send('SAVED (not)');
+    if (!drink.primaryName || !drink.preparation || !drink.type) {
+      res.redirect(`/drinks/${id}/`);
+    } else {
+      this.drinkRepo.updateById(id, drink)
+        .then(() => res.redirect(`/drinks/${id}/`), err => res.status(err.statusCode || 500).send(err.toString() + '\n' + err.stack));
+    }
   }
 
   addNew(drink, res) {

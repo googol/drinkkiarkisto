@@ -81,4 +81,18 @@ export class DrinkRepository {
       return client.queryAsync(sql`DELETE FROM drinks WHERE id=${id}`);
     });
   }
+
+  updateById(id, drink) {
+    if (!drink.primaryName) {
+      return Promise.reject(new Error('The primary name of the drink is required.'));
+    } else if(!drink.preparation) {
+      return Promise.reject(new Error('The preparation instruction for the drink is required.'));
+    }
+    const ingredients = drink.ingredients || [];
+    return usingConnectTransaction(this.connectionString, client =>
+      client.queryAsync(sql`UPDATE drinks SET primaryName=${drink.primaryName}, preparation=${drink.preparation}, type=${drink.type} WHERE id=${id}`)
+        .then(() => client.queryAsync(sql`DELETE FROM drinkIngredients WHERE drink=${id}`))
+        .then(() => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(id, ingredient)))))
+        .return(id));
+  }
 }
