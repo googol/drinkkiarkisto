@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyparser from 'body-parser'
+import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
 import { DrinksController } from './controllers'
 
@@ -47,7 +48,7 @@ export function configureRoutes(app, connectionString) {
 
   app.route('/login')
     .get((req, res) => res.render('login'))
-    .post((req, res) => res.redirect('/'));
+    .post(urlencodedParser, passport.authenticate('local', { successRedirect: '/'}));
 
   app.route('/logout')
     .get((req, res) => res.render('logout'))

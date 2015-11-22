@@ -1,4 +1,5 @@
 BEGIN;
+  DROP TABLE IF EXISTS session;
   DROP TABLE IF EXISTS additionalDrinkNames;
   DROP TABLE IF EXISTS drinkIngredients;
   DROP TABLE IF EXISTS drinks;

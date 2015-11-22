@@ -34,4 +34,11 @@ BEGIN;
     drink integer NOT NULL REFERENCES drinks (id) ON DELETE CASCADE,
     name text NOT NULL,
     PRIMARY KEY (drink, name));
+
+  CREATE TABLE session (
+    sid varchar NOT NULL COLLATE "default",
+    sess json NOT NULL,
+    expire timestamp(6) NOT NULL,
+    PRIMARY KEY (sid)
+  ) WITH (OIDS=FALSE);
 COMMIT;
