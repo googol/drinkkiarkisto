@@ -42,7 +42,7 @@ export class DrinksController {
       (ingredients, drinkTypes) => res.render('newdrink', { ingredients: ingredients, drinkTypes: drinkTypes }));
   }
 
-  updateSingle(id, primaryName, preparation, ingredientAmounts, res) {
+  updateSingle(id, drink, res) {
     res.send('SAVED (not)');
   }
 
