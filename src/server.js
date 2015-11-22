@@ -57,7 +57,7 @@ app.route('/drinks/:drinkId')
     ? drinksController.showSingleEditor(req.params.drinkId, res)
     : drinksController.showSingle(req.params.drinkId, res))
   .put(urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
-  .delete(urlencodedParser, (req, res) => drinksController.deleteSingle(req.body.id, res));
+  .delete((req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
 app.route('/register')
   .get((req, res) => res.render('register'));
