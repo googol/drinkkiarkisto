@@ -1,7 +1,7 @@
 <% include head %>
 <div class="container">
   <h1>Muokataan drinkkiä: <%= locals.drink.primaryName %></h1>
-  <form action="/drinks/<%= locals.drink.id %>/" method="post" class="form-horizontal">
+  <form action="/drinks/<%= locals.drink.id %>/?_method=put" method="post" class="form-horizontal">
     <div class="form-group">
       <label for="drinkName" class="col-sm-2 control-label">Drinkin nimi</label>
       <div class="col-sm-8">
