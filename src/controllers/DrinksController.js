@@ -30,8 +30,9 @@ export class DrinksController {
   showSingleEditor(id, res) {
     Promise.join(
       findSingleDrinkOr404(this.drinkRepo, id),
+      this.drinkTypeRepo.getAll(),
       this.ingredientRepo.getAllWithAmountsForDrink(id),
-      (drink, ingredients) => res.render('editdrink', { drink: drink, ingredients: ingredients }));
+      (drink, drinkTypes, ingredients) => res.render('editdrink', { drink: drink, drinkTypes: drinkTypes, ingredients: ingredients }));
   }
 
   showNewEditor(res) {
