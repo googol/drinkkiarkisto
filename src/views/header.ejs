@@ -16,8 +16,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <% if (locals.loggedIn) { %>
-        <li><a href="/logout">Kirjaudu ulos</a></li>
-        <li><a href="/profile">Oma profiili</a></li>
+        <li><form action="/logout" method="post"><button class="btn btn-link navbar-btn">Kirjaudu ulos</button></form></li>
         <% } else { %>
         <li><a href="/register">Rekisteröidy</a></li>
         <li><a href="/login">Kirjaudu sisään</a></li>

@@ -51,8 +51,7 @@ export function configureRoutes(app, connectionString) {
     .post(urlencodedParser, passport.authenticate('local', { successRedirect: '/'}));
 
   app.route('/logout')
-    .get((req, res) => res.render('logout'))
-    .post((req, res) => res.redirect('/'));
+    .post((req, res) => { req.logout(); res.redirect('/'); });
 
   app.route('/profile')
     .get((req, res) => res.render('profile'));
