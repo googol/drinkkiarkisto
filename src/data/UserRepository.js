@@ -11,7 +11,7 @@ class User {
     this.email = userData.email;
     this.passwordHash = userData.passwordhash;
     this.salt = userData.salt;
-    this.isAdmin = userData.isadmin;
+    this.isAdmin = userData.admin;
   }
 
   validatePassword(password) {
