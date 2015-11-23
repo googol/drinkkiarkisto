@@ -1,6 +1,7 @@
 export class ProfileController {
-  constructor(passport) {
+  constructor(passport, userRepo) {
     this.passport = passport;
+    this.userRepo = userRepo;
   }
 
   showRegistrationPage(res) {
@@ -39,7 +40,30 @@ export class ProfileController {
     res.redirect('/');
   }
 
-  showProfilePage(user, res) {
-    res.render('profile', { user: user });
+  showProfilePage(user, req, res) {
+    res.render('profile', { user: user, successes: req.flash('success'), errors: req.flash('error') });
+  }
+
+  updatePassword(user, passwordCurrent, passwordNew, passwordNewConfirm, req, res) {
+    user.validatePassword(passwordCurrent)
+      .then(isValid => {
+        let errors = 0;
+        if (!isValid) { req.flash('error', 'Nykyinen salasana ei ole oikein'); errors++; }
+        if (passwordNew !== passwordNewConfirm) { req.flash('error', 'Uusi salasana ja salasanan vahvistus eivät täsmää'); errors++; }
+        if (!passwordNew) { req.flash('error', 'Uusi salasana ei voi olla tyhjä'); errors++; }
+
+        if (errors === 0) {
+          return this.userRepo.updatePasswordById(user.id, passwordNew)
+            .then(() => req.flash('success', 'Salasana vaihdettu.'));
+        }
+      })
+      .then(() => res.redirect('/profile'));
+  }
+
+  deleteProfile(req, res) {
+    const user = req.user;
+    req.logout();
+    this.userRepo.deleteById(user.id)
+      .then(() => res.redirect('/'));
   }
 }

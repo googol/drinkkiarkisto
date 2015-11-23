@@ -1,3 +1,30 @@
 <% include head %>
-<h1>Profiilisi</h1>
+<div class="container">
+  <h1>Profiilisi</h1>
+  <% include flash %>
+  <p>Sähköpostiosoite: <%= locals.user.email %></p>
+  <% if(locals.user.isAdmin) { %>
+  <p>Sinulla on ylläpito-oikeudet.</p>
+  <% } %>
+  <div class="col-xs-4">
+    <form action="/profile" method="post">
+      <div class="form-group">
+        <label for="passwordCurrent">Salasana</label>
+        <input type="password" id="passwordCurrent" name="passwordCurrent" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="passwordNew">Uusi salasana</label>
+        <input type="password" id="passwordNew" name="passwordNew" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="passwordNewConfirm">Vahvista uusi salasana</label>
+        <input type="password" id="passwordNewConfirm" name="passwordNewConfirm" class="form-control" />
+      </div>
+      <button name="changePassword" value="true" class="btn btn-default">Vaihda salasana</button>
+    </form>
+  </div>
+  <form action="/profile?_method=delete" method="post">
+    <button class="btn btn-danger">Poista profiili</button>
+  </form>
+</div>
 <% include foot %>

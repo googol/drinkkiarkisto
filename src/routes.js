@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyparser from 'body-parser'
 import passport from 'passport'
-import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
+import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserRepository } from './data';
 import { DrinksController, ProfileController } from './controllers'
 import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory } from './middleware'
 
@@ -26,9 +26,10 @@ export function configureRoutes(app, connectionString) {
   const drinkRepository = new DrinkRepository(connectionString);
   const drinkTypeRepository = new DrinkTypeRepository(connectionString);
   const ingredientRepository = new IngredientRepository(connectionString);
+  const userRepository = new UserRepository(connectionString);
 
   const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
-  const profileController = new ProfileController(passport);
+  const profileController = new ProfileController(passport, userRepository);
 
   const requireUserOrLogin = requireUserOrLoginFactory(profileController);
   const requireAdminOrLogin = requireAdminOrLoginFactory(profileController);
@@ -60,7 +61,9 @@ export function configureRoutes(app, connectionString) {
     .post((req, res) => profileController.logout(req, res));
 
   app.route('/profile')
-    .get(requireUserOrLogin, (req, res) => profileController.showProfilePage(req.user, res));
+    .get(requireUserOrLogin, (req, res) => profileController.showProfilePage(req.user, req, res))
+    .post(requireUser, urlencodedParser, (req, res) => profileController.updatePassword(req.user, req.body.passwordCurrent, req.body.passwordNew, req.body.passwordNewConfirm, req, res))
+    .delete(requireUser, (req, res) => profileController.deleteProfile(req, res));
 
   app.use('/', express.static(__dirname + '/../public'));
 }
