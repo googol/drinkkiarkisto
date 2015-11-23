@@ -56,5 +56,5 @@ export function configureRoutes(app, connectionString) {
   app.route('/profile')
     .get((req, res) => res.render('profile', { loggedIn: !!req.user }));
 
-  app.use('/', express.static(__dirname + '/public'));
+  app.use('/', express.static(__dirname + '/../public'));
 }
