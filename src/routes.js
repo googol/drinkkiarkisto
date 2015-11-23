@@ -29,11 +29,29 @@ function requireUser(req, res, next) {
   }
 }
 
+function requireAdmin(req, res, next) {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+}
+
 function requireUserOrLogin(req, res, next) {
   if (req.user) {
     next();
   } else {
     req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
+    req.flash('redirect', req.originalUrl);
+    res.redirect('/login');
+  }
+}
+
+function requireAdminOrLogin(req, res, next) {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
     req.flash('redirect', req.originalUrl);
     res.redirect('/login');
   }
@@ -79,10 +97,10 @@ export function configureRoutes(app, connectionString) {
 
   app.route('/drinks/:drinkId')
     .get((req, res) => req.query.edit !== undefined
-      ? requireUserOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user))
+      ? requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user))
       : drinksController.showSingle(req.params.drinkId, res, req.user))
-    .put(requireUser, urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
-    .delete(requireUser, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
+    .put(requireAdmin, urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
+    .delete(requireAdmin, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
   app.route('/register')
     .get((req, res) => res.render('register', { loggedIn: !!req.user }));
