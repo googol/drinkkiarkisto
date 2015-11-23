@@ -8,7 +8,7 @@ export class ProfileController {
   }
 
   showLoginPage(req, res) {
-    res.render('login', { user: req.user, error: req.flash('error')[0] });
+    res.render('login', { user: req.user, errors: req.flash('error') });
   }
 
   login(req, res, next) {

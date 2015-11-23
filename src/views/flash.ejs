@@ -1,0 +1,15 @@
+<% if (locals.successes && locals.successes.length) { %>
+  <% locals.successes.forEach(function(success) { %>
+  <div class="alert alert-success" role="alert">
+    <%= success %>
+  </div>
+  <% }); %>
+<% } %>
+<% if (locals.errors && locals.errors.length) { %>
+  <% locals.errors.forEach(function(error) { %>
+  <div class="alert alert-danger" role="alert">
+    <%= error %>
+  </div>
+  <% }); %>
+<% } %>
+
