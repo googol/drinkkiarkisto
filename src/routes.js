@@ -3,6 +3,7 @@ import bodyparser from 'body-parser'
 import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
 import { DrinksController, ProfileController } from './controllers'
+import { requireUser, requireAdmin, requireUserOrLogin, requireAdminOrLogin } from './middleware'
 
 const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
@@ -19,42 +20,6 @@ function getDrinkFromRequestBody(body) {
     ingredients: getIngredientAmounts(body),
     type: body.drinkType
   };
-}
-
-function requireUser(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-}
-
-function requireAdmin(req, res, next) {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-}
-
-function requireUserOrLogin(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
-    req.flash('redirect', req.originalUrl);
-    res.redirect('/login');
-  }
-}
-
-function requireAdminOrLogin(req, res, next) {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
-    req.flash('redirect', req.originalUrl);
-    res.redirect('/login');
-  }
 }
 
 export function configureRoutes(app, connectionString) {

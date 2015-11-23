@@ -3,9 +3,45 @@ import session from 'express-session'
 import connectPgSimple from 'connect-pg-simple'
 import passport from 'passport'
 import flash from 'connect-flash'
-import { Strategy as LocalStrategy } from 'passport-local'
 import pg from 'pg'
+import { Strategy as LocalStrategy } from 'passport-local'
 import { UserRepository } from './data'
+
+export function requireUser(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+}
+
+export function requireAdmin(req, res, next) {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+}
+
+export function requireUserOrLogin(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
+    req.flash('redirect', req.originalUrl);
+    res.redirect('/login');
+  }
+}
+
+export function requireAdminOrLogin(req, res, next) {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
+    req.flash('redirect', req.originalUrl);
+    res.redirect('/login');
+  }
+}
 
 export function configureMiddleware(app, connectionString, cookieSecret) {
   const PgSession = connectPgSimple(session);
