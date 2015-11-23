@@ -1,6 +1,11 @@
 <% include head %>
 <div class="container">
   <h1>Kirjaudu sisään</h1>
+  <% if (locals.error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= locals.error %>
+    </div>
+  <% } %>
   <form action="/login" method="post" class="form-horizontal">
     <div class="form-group">
       <label for="username" class="col-sm-2 control-label">Sähköpostiosoite</label>

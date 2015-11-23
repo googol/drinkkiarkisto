@@ -2,6 +2,7 @@ import methodOverride from 'method-override'
 import session from 'express-session'
 import connectPgSimple from 'connect-pg-simple'
 import passport from 'passport'
+import flash from 'connect-flash'
 import { Strategy as LocalStrategy } from 'passport-local'
 import pg from 'pg'
 import { UserRepository } from './data'
@@ -45,6 +46,7 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
 
   app.use(methodOverride('_method'));
   app.use(session(sessionConfiguration));
+  app.use(flash());
   app.use(passport.initialize());
   app.use(passport.session());
 }
