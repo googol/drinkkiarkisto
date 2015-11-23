@@ -24,13 +24,13 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
     userRepo.findByEmail(email)
       .then(user => {
         if (!user) {
-          return done(null, false, { message: 'Incorrect email address' });
+          return done(null, false, { message: 'Väärä sähköpostiosoite' });
         }
 
         return user.validatePassword(password)
           .then(isValid => isValid
             ? done(null, user)
-            : done(null, false, { message: 'Incorrect password' }),
+            : done(null, false, { message: 'Väärä salasana' }),
             err => done(err));
       }, err => done(err));
   });
