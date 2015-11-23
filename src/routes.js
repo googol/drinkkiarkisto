@@ -21,6 +21,47 @@ function getDrinkFromRequestBody(body) {
   };
 }
 
+function requireUser(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+}
+
+function requireUserOrLogin(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
+    req.flash('redirect', req.originalUrl);
+    res.redirect('/login');
+  }
+}
+
+function authenticate(req, res, next) {
+  const validationFunc = (err, user, info) => {
+    if (err) {
+      next(err);
+    } else if (!user) {
+      req.flash('error', info.message);
+      res.redirect('/login');
+    } else {
+      req.logIn(user, err => {
+        if (err) {
+          next(err);
+        } else {
+          const redirectTo = req.flash('redirect')[0] || '/';
+          res.redirect(redirectTo);
+        }
+      });
+    }
+  };
+  const authenticationFunc = passport.authenticate('local', validationFunc);
+
+  authenticationFunc(req, res, next);
+}
+
 export function configureRoutes(app, connectionString) {
   const drinkRepository = new DrinkRepository(connectionString);
   const drinkTypeRepository = new DrinkTypeRepository(connectionString);
@@ -32,29 +73,29 @@ export function configureRoutes(app, connectionString) {
 
   app.route('/drinks')
     .get((req, res) => req.query.new !== undefined
-        ? drinksController.showNewEditor(res, req.user)
+        ? requireUserOrLogin(req, res, () => drinksController.showNewEditor(res, req.user))
         : res.redirect('/'))
-    .post(urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
+    .post(requireUser, urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
 
   app.route('/drinks/:drinkId')
     .get((req, res) => req.query.edit !== undefined
-      ? drinksController.showSingleEditor(req.params.drinkId, res, req.user)
+      ? requireUserOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user))
       : drinksController.showSingle(req.params.drinkId, res, req.user))
-    .put(urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
-    .delete((req, res) => drinksController.deleteSingle(req.params.drinkId, res));
+    .put(requireUser, urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
+    .delete(requireUser, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
   app.route('/register')
     .get((req, res) => res.render('register', { loggedIn: !!req.user }));
 
   app.route('/login')
     .get((req, res) => res.render('login', { loggedIn: !!req.user, error: req.flash('error')[0] }))
-    .post(urlencodedParser, passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }));
+    .post(urlencodedParser, authenticate);
 
   app.route('/logout')
     .post((req, res) => { req.logout(); res.redirect('/'); });
 
   app.route('/profile')
-    .get((req, res) => res.render('profile', { loggedIn: !!req.user }));
+    .get(requireUser, (req, res) => res.render('profile', { loggedIn: !!req.user }));
 
   app.use('/', express.static(__dirname + '/../public'));
 }
