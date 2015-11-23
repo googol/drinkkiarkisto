@@ -20,7 +20,7 @@ export class DrinkRepository {
 
   getAll() {
     return usingConnect(this.connectionString, function(client) {
-      return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.name as type FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id')
+      return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id')
         .then(function(result) {
           const transformed = new Map();
           result.rows.forEach(function(currentRow) {
@@ -29,7 +29,7 @@ export class DrinkRepository {
                 id: currentRow.id,
                 primaryName: currentRow.primaryname,
                 preparation: currentRow.preparation,
-                type: currentRow.type,
+                type: { id: currentRow.typeid, name: currentRow.typename, description: currentRow.typedescription },
                 ingredients: []
               });
             }
@@ -46,14 +46,14 @@ export class DrinkRepository {
 
   findById(id) {
     return usingConnect(this.connectionString, function(client) {
-      return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinktypes.name as type FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`)
+      return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`)
         .then(result => result.rows.length === 0
           ? undefined
           : {
               id: result.rows[0].id,
               primaryName: result.rows[0].primaryname,
               preparation: result.rows[0].preparation,
-              type: result.rows[0].type,
+              type: { id: result.rows[0].typeid, name: result.rows[0].typename, description: result.rows[0].typedescription },
               ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
             },
           err => undefined);

@@ -19,7 +19,7 @@
       <div class="col-sm-8">
         <select id="drinkType" name="drinkType" class="form-control">
           <% locals.drinkTypes.forEach(function(drinkType) { %>
-          <% var extraAttributes = locals.drink.type == drinkType.name ? 'selected' : ''; %>
+          <% var extraAttributes = locals.drink.type.id == drinkType.id ? 'selected' : ''; %>
           <option value="<%= drinkType.id %>" <%= extraAttributes %>><%= drinkType.name %></option>
           <% }); %>
         </select>
