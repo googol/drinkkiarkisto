@@ -1,7 +1,7 @@
 BEGIN;
   CREATE TABLE users (
     id serial NOT NULL PRIMARY KEY,
-    username text NOT NULL UNIQUE,
+    email text NOT NULL UNIQUE,
     passwordHash text NOT NULL,
     salt text NOT NULL,
     admin boolean NOT NULL);
