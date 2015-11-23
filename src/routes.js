@@ -1,11 +1,8 @@
 import express from 'express';
-import bodyparser from 'body-parser'
 import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserRepository } from './data';
 import { DrinksController, ProfileController } from './controllers'
-import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory } from './middleware'
-
-const urlencodedParser = bodyparser.urlencoded({ extended: false });
+import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory, urlencodedParser } from './middleware'
 
 function getIngredientAmounts(body) {
   return Object.keys(body)

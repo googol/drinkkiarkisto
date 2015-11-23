@@ -4,8 +4,11 @@ import connectPgSimple from 'connect-pg-simple'
 import passport from 'passport'
 import flash from 'connect-flash'
 import pg from 'pg'
+import bodyparser from 'body-parser'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { UserRepository } from './data'
+
+export const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
 export function requireUser(req, res, next) {
   if (req.user) {
