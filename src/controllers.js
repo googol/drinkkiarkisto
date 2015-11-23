@@ -2,3 +2,4 @@
 // Individual controllers are defined in separate files inside the src/controllers directory
 
 export { DrinksController } from './controllers/DrinksController.js'
+export { ProfileController } from './controllers/ProfileController.js'

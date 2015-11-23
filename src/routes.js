@@ -2,7 +2,7 @@ import express from 'express';
 import bodyparser from 'body-parser'
 import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
-import { DrinksController } from './controllers'
+import { DrinksController, ProfileController } from './controllers'
 
 const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
@@ -57,34 +57,13 @@ function requireAdminOrLogin(req, res, next) {
   }
 }
 
-function authenticate(req, res, next) {
-  const validationFunc = (err, user, info) => {
-    if (err) {
-      next(err);
-    } else if (!user) {
-      req.flash('error', info.message);
-      res.redirect('/login');
-    } else {
-      req.logIn(user, err => {
-        if (err) {
-          next(err);
-        } else {
-          const redirectTo = req.flash('redirect')[0] || '/';
-          res.redirect(redirectTo);
-        }
-      });
-    }
-  };
-  const authenticationFunc = passport.authenticate('local', validationFunc);
-
-  authenticationFunc(req, res, next);
-}
-
 export function configureRoutes(app, connectionString) {
   const drinkRepository = new DrinkRepository(connectionString);
   const drinkTypeRepository = new DrinkTypeRepository(connectionString);
   const ingredientRepository = new IngredientRepository(connectionString);
+
   const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
+  const profileController = new ProfileController(passport);
 
   app.route('/')
     .get((req, res) => drinksController.showList(res, req.user));
@@ -103,17 +82,17 @@ export function configureRoutes(app, connectionString) {
     .delete(requireAdmin, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
   app.route('/register')
-    .get((req, res) => res.render('register', { user: req.user }));
+    .get((req, res) => profileController.showRegistrationPage(res));
 
   app.route('/login')
-    .get((req, res) => res.render('login', { user: req.user, error: req.flash('error')[0] }))
-    .post(urlencodedParser, authenticate);
+    .get((req, res) => profileController.showLoginPage(req, res))
+    .post(urlencodedParser, (req, res, next) => profileController.login(req, res, next));
 
   app.route('/logout')
-    .post((req, res) => { req.logout(); res.redirect('/'); });
+    .post((req, res) => profileController.logout(req, res));
 
   app.route('/profile')
-    .get(requireUser, (req, res) => res.render('profile', { user: req.user }));
+    .get(requireUserOrLogin, (req, res) => profileController.showProfilePage(req.user, res));
 
   app.use('/', express.static(__dirname + '/../public'));
 }
