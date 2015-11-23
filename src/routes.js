@@ -22,6 +22,12 @@ function getDrinkFromRequestBody(body) {
   };
 }
 
+function ifHasQueryParam(param, then, otherwise) {
+  return (req, res) => req.query[param] !== undefined
+    ? then(req, res)
+    : otherwise(req, res);
+}
+
 export function configureRoutes(app, connectionString) {
   const drinkRepository = new DrinkRepository(connectionString);
   const drinkTypeRepository = new DrinkTypeRepository(connectionString);
@@ -38,15 +44,15 @@ export function configureRoutes(app, connectionString) {
     .get((req, res) => drinksController.showList(res, req.user));
 
   app.route('/drinks')
-    .get((req, res) => req.query.new !== undefined
-        ? requireUserOrLogin(req, res, () => drinksController.showNewEditor(res, req.user))
-        : res.redirect('/'))
+    .get(ifHasQueryParam('new',
+      (req, res) => requireUserOrLogin(req, res, () => drinksController.showNewEditor(res, req.user)),
+      (req, res) => res.redirect('/')))
     .post(requireUser, urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
 
   app.route('/drinks/:drinkId')
-    .get((req, res) => req.query.edit !== undefined
-      ? requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user))
-      : drinksController.showSingle(req.params.drinkId, res, req.user))
+    .get(ifHasQueryParam('edit',
+      (req, res) => requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user)),
+      (req, res) => drinksController.showSingle(req.params.drinkId, res, req.user)))
     .put(requireAdmin, urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
     .delete(requireAdmin, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
