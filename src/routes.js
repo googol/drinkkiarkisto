@@ -28,33 +28,33 @@ export function configureRoutes(app, connectionString) {
   const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
 
   app.route('/')
-    .get((req, res) => drinksController.showList(res));
+    .get((req, res) => drinksController.showList(res, req.user));
 
   app.route('/drinks')
     .get((req, res) => req.query.new !== undefined
-        ? drinksController.showNewEditor(res)
+        ? drinksController.showNewEditor(res, req.user)
         : res.redirect('/'))
     .post(urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
 
   app.route('/drinks/:drinkId')
     .get((req, res) => req.query.edit !== undefined
-      ? drinksController.showSingleEditor(req.params.drinkId, res)
-      : drinksController.showSingle(req.params.drinkId, res))
+      ? drinksController.showSingleEditor(req.params.drinkId, res, req.user)
+      : drinksController.showSingle(req.params.drinkId, res, req.user))
     .put(urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
     .delete((req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
   app.route('/register')
-    .get((req, res) => res.render('register'));
+    .get((req, res) => res.render('register', { loggedIn: !!req.user }));
 
   app.route('/login')
-    .get((req, res) => res.render('login'))
+    .get((req, res) => res.render('login', { loggedIn: !!req.user }))
     .post(urlencodedParser, passport.authenticate('local', { successRedirect: '/'}));
 
   app.route('/logout')
     .post((req, res) => { req.logout(); res.redirect('/'); });
 
   app.route('/profile')
-    .get((req, res) => res.render('profile'));
+    .get((req, res) => res.render('profile', { loggedIn: !!req.user }));
 
   app.use('/', express.static(__dirname + '/public'));
 }

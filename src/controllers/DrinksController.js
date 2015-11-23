@@ -19,27 +19,27 @@ export class DrinksController {
     this.ingredientRepo = ingredientRepo;
   }
 
-  showList(res) {
-    this.drinkRepo.getAll().then(result => res.render('index', { drinks: result }));
+  showList(res, user) {
+    this.drinkRepo.getAll().then(result => res.render('index', { drinks: result, loggedIn: !!user }));
   }
 
-  showSingle(id, res) {
-    findSingleDrinkOr404(this.drinkRepo, id).then(drink => res.render('singledrink', { drink: drink }), err => res.status(err.statusCode || 500).send(err.toString()));
+  showSingle(id, res, user) {
+    findSingleDrinkOr404(this.drinkRepo, id).then(drink => res.render('singledrink', { drink: drink, loggedIn: !!user }), err => res.status(err.statusCode || 500).send(err.toString()));
   }
 
-  showSingleEditor(id, res) {
+  showSingleEditor(id, res, user) {
     Promise.join(
       findSingleDrinkOr404(this.drinkRepo, id),
       this.drinkTypeRepo.getAll(),
       this.ingredientRepo.getAllWithAmountsForDrink(id),
-      (drink, drinkTypes, ingredients) => res.render('editdrink', { drink: drink, drinkTypes: drinkTypes, ingredients: ingredients }));
+      (drink, drinkTypes, ingredients) => res.render('editdrink', { drink: drink, drinkTypes: drinkTypes, ingredients: ingredients, loggedIn: !!user }));
   }
 
-  showNewEditor(res) {
+  showNewEditor(res, user) {
     Promise.join(
       this.ingredientRepo.getAll(),
       this.drinkTypeRepo.getAll(),
-      (ingredients, drinkTypes) => res.render('newdrink', { ingredients: ingredients, drinkTypes: drinkTypes }));
+      (ingredients, drinkTypes) => res.render('newdrink', { ingredients: ingredients, drinkTypes: drinkTypes, loggedIn: !!user }));
   }
 
   updateSingle(id, drink, res) {
