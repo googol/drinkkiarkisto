@@ -8,6 +8,9 @@ Tämä harjoitustyö perustuu valmiiseen drinkkiarkisto-aiheeseen. Aiheen kuvaus
 ## Demoinstanssi
 Tämänhetkinen kehitysversio pyörii osoitteessa: https://peaceful-scrubland-8625.herokuapp.com/
 
+### Kirjautuminen
+Demoinstanssilla on kaksi käyttäjää valmiina: admin@example.com ja user@example.com. Molempien salasana on password. Ensimäinen on admin ja toinen peruskäyttäjä, joka ei tosin tässä vaiheessa vielä vaikuta ohjelmiston käyttäytymiseen.
+
 ## Dokumentaatio
 Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://peaceful-scrubland-8625.herokuapp.com/doc/documentation.pdf)
 
