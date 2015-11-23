@@ -15,7 +15,8 @@
         <li><a href="doc/documentation.pdf">Dokumentaatio</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <% if (locals.loggedIn) { %>
+        <% if (locals.user) { %>
+        <li><p class="navbar-text">Kirjautunut sisään käyttäjänä: <%=user.email%></p></li>
         <li><form action="/logout" method="post"><button class="btn btn-link navbar-btn">Kirjaudu ulos</button></form></li>
         <% } else { %>
         <li><a href="/register">Rekisteröidy</a></li>

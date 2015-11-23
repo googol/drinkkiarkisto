@@ -103,17 +103,17 @@ export function configureRoutes(app, connectionString) {
     .delete(requireAdmin, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
 
   app.route('/register')
-    .get((req, res) => res.render('register', { loggedIn: !!req.user }));
+    .get((req, res) => res.render('register', { user: req.user }));
 
   app.route('/login')
-    .get((req, res) => res.render('login', { loggedIn: !!req.user, error: req.flash('error')[0] }))
+    .get((req, res) => res.render('login', { user: req.user, error: req.flash('error')[0] }))
     .post(urlencodedParser, authenticate);
 
   app.route('/logout')
     .post((req, res) => { req.logout(); res.redirect('/'); });
 
   app.route('/profile')
-    .get(requireUser, (req, res) => res.render('profile', { loggedIn: !!req.user }));
+    .get(requireUser, (req, res) => res.render('profile', { user: req.user }));
 
   app.use('/', express.static(__dirname + '/../public'));
 }
