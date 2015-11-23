@@ -3,7 +3,7 @@ import bodyparser from 'body-parser'
 import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository } from './data';
 import { DrinksController, ProfileController } from './controllers'
-import { requireUser, requireAdmin, requireUserOrLogin, requireAdminOrLogin } from './middleware'
+import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory } from './middleware'
 
 const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
@@ -29,6 +29,9 @@ export function configureRoutes(app, connectionString) {
 
   const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
   const profileController = new ProfileController(passport);
+
+  const requireUserOrLogin = requireUserOrLoginFactory(profileController);
+  const requireAdminOrLogin = requireAdminOrLoginFactory(profileController);
 
   app.route('/')
     .get((req, res) => drinksController.showList(res, req.user));

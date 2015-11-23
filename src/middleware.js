@@ -23,24 +23,30 @@ export function requireAdmin(req, res, next) {
   }
 }
 
-export function requireUserOrLogin(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
-    req.flash('redirect', req.originalUrl);
-    res.redirect('/login');
-  }
+export function requireUserOrLoginFactory(profileController) {
+  return (req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
+      req.flash('redirect', req.originalUrl);
+      res.status(401);
+      profileController.showLoginPage(req, res);
+    }
+  };
 }
 
-export function requireAdminOrLogin(req, res, next) {
-  if (req.user && req.user.isAdmin) {
-    next();
-  } else {
-    req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
-    req.flash('redirect', req.originalUrl);
-    res.redirect('/login');
-  }
+export function requireAdminOrLoginFactory(profileController) {
+  return (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+      next();
+    } else {
+      req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
+      req.flash('redirect', req.originalUrl);
+      res.status(401);
+      profileController.showLoginPage(req, res);
+    }
+  };
 }
 
 export function configureMiddleware(app, connectionString, cookieSecret) {
