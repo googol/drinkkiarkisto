@@ -47,7 +47,7 @@ export function configureRoutes(app, connectionString) {
     .get((req, res) => res.render('register', { loggedIn: !!req.user }));
 
   app.route('/login')
-    .get((req, res) => res.render('login', { loggedIn: !!req.user, error: req.flash('error') }))
+    .get((req, res) => res.render('login', { loggedIn: !!req.user, error: req.flash('error')[0] }))
     .post(urlencodedParser, passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }));
 
   app.route('/logout')
