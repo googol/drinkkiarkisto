@@ -40,7 +40,7 @@ export class DrinksController {
     this.drinkRepo.getAll()
       .then(result => res.locals.drinks = result)
       .then(() => render(res, 'index'))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   showSingle(req, res, next) {
@@ -48,7 +48,7 @@ export class DrinksController {
     findSingleDrinkOr404(this.drinkRepo, id)
       .then(drink => setLocals(res, { drink }))
       .then(() => render(res, 'singledrink'))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   showSingleEditor(req, res, next) {
@@ -59,7 +59,7 @@ export class DrinksController {
       this.ingredientRepo.getAllWithAmountsForDrink(id),
       (drink, drinkTypes, ingredients) => setLocals(res, { drink, drinkTypes, ingredients }))
       .then(() => render(res, 'editdrink'))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   showNewEditor(req, res, next) {
@@ -68,7 +68,7 @@ export class DrinksController {
       this.drinkTypeRepo.getAll(),
       (ingredients, drinkTypes) => setLocals(res, { ingredients, drinkTypes }))
       .then(() => render(res, 'newdrink'))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   updateSingle(req, res, next) {
@@ -78,7 +78,7 @@ export class DrinksController {
         ? res.redirect(`/drinks/${id}/`)
         : this.drinkRepo.updateById(id, drink)
             .then(() => res.redirect(`/drinks/${id}/`)))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   addNew(req, res, next) {
@@ -87,13 +87,13 @@ export class DrinksController {
         ? res.redirect('/drinks/?new')
         : this.drinkRepo.addDrink(drink)
             .then(drinkId => res.redirect(`/drinks/${drinkId}/`)))
-      .catch(err => next(err));
+      .catch(next);
   }
 
   deleteSingle(req, res, next) {
     const id = req.params.drinkId;
     this.drinkRepo.deleteById(id)
       .then(drinkId => res.redirect('/'))
-      .catch(err => next(err));
+      .catch(next);
   }
 }
