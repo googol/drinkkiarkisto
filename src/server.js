@@ -1,6 +1,7 @@
 import express from 'express';
 import { configureRoutes } from './routes'
 import { configureMiddleware } from './middleware'
+import { configureValidationErrorHandling } from './validation'
 
 const app = express();
 const connectionString = process.env.DATABASE_URL;
@@ -13,6 +14,7 @@ app.set('view engine', 'ejs');
 
 configureMiddleware(app, connectionString, cookieSecret);
 configureRoutes(app, connectionString);
+configureValidationErrorHandling(app);
 
 const server = app.listen(app.get('port'), function() {
   const port = server.address().port;

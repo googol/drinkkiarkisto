@@ -1,5 +1,6 @@
 import Promise from 'bluebird'
 import { render, setLocals, created, updated, deleted } from './helpers'
+import { DrinkValidator } from '../validation'
 
 function findSingleDrinkOr404(drinkRepo, id) {
   return drinkRepo.findById(id).then(drink => {
@@ -59,19 +60,21 @@ export class DrinksController {
     const id = req.params.drinkId;
     const drinkUrl = `/drinks/${id}/`;
     const drink = res.locals.drink;
-    Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type || !drink.type.id)
-        ? res.redirect(drinkUrl + '?edit')
-        : this.drinkRepo.updateById(id, drink)
-            .then(() => updated(res, drinkUrl)))
+    const validator = new DrinkValidator();
+
+    validator.validate(drink, drinkUrl + '?edit')
+      .then(() => this.drinkRepo.updateById(id, drink))
+      .then(() => updated(res, drinkUrl))
       .catch(next);
   }
 
   addNew(req, res, next) {
     const drink = res.locals.drink;
-    Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type || !drink.type.id)
-        ? res.redirect('/drinks/?new')
-        : this.drinkRepo.addDrink(drink)
-            .then(drinkId => created(res, `/drinks/${drinkId}/`)))
+    const validator = new DrinkValidator();
+
+    validator.validate(drink, drinkUrl + '?edit')
+      .then(() => this.drinkRepo.addDrink(drink))
+      .then(drinkId => created(res, `/drinks/${drinkId}/`))
       .catch(next);
   }
 

@@ -7,6 +7,7 @@ import pg from 'pg'
 import bodyparser from 'body-parser'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { UserRepository } from './data'
+import { ValidationError } from './validation'
 
 export const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
