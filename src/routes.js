@@ -39,7 +39,8 @@ export function configureRoutes(app, connectionString) {
     .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
 
   app.route('/register')
-    .get((req, res, next) => profileController.showRegistrationPage(req, res, next));
+    .get((req, res, next) => profileController.showRegistrationPage(req, res, next))
+    .post(urlencodedParser, (req, res, next) => profileController.registerUser(req, res, next));
 
   app.route('/login')
     .get((req, res, next) => profileController.showLoginPage(req, res, next))

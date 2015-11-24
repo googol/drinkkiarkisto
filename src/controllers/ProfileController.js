@@ -1,5 +1,6 @@
 import Promise from 'bluebird'
-import { render } from './helpers'
+import { render, created } from './helpers'
+import { ValidationError } from '../validation'
 
 export class ProfileController {
   constructor(passport, userRepo) {
@@ -9,6 +10,32 @@ export class ProfileController {
 
   showRegistrationPage(req, res, next) {
     render(res, 'register')
+      .catch(next);
+  }
+
+  registerUser(req, res, next) {
+    const email = req.body.email;
+    const password = req.body.password;
+    const passwordConfirm = req.body.passwordConfirm;
+
+    Promise.try(() => {
+      let errorMessages = {};
+      if (!email) {
+        errorMessages.email = 'Sähköpostiosoite vaaditaan';
+      }
+      if (!password) {
+        errorMessages.password = 'Salasana vaaditaan';
+      }
+      if (password !== passwordConfirm) {
+        errorMessages.passwordConfirm = 'Salasana ja salasanan vahvistus eivät vastaa toisiaan';
+      }
+
+      if (Object.keys(errorMessages).length > 0) {
+        throw new ValidationError({ email, password, passwordConfirm }, errorMessages, '/register');
+      }
+    }).then(() => this.userRepo.addUser({ email, password }))
+      .then(() => req.flash('success', 'Käyttäjätunnus luotu, kirjaudu sisään.'))
+      .then(() => created(res, '/login'))
       .catch(next);
   }
 

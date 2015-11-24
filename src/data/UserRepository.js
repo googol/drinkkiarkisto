@@ -59,6 +59,15 @@ export class UserRepository {
         client.queryAsync(sql`UPDATE users SET passwordHash=${passwordHash}, salt=${salt} WHERE id=${id}`)));
   }
 
+  addUser(user) {
+    const email = user.email;
+    const isAdmin = user.isAdmin || false;
+
+    return generatePasswordHashAndSalt(user.password)
+      .spread((passwordHash, salt) => usingConnect(this.connectionString, client =>
+        client.queryAsync(sql`INSERT INTO users (email, passwordHash, salt, admin) VALUES (${email}, ${passwordHash}, ${salt}, ${isAdmin})`)));
+  }
+
   deleteById(id) {
     return usingConnect(this.connectionString, client => client.queryAsync(sql`DELETE FROM users WHERE id=${id}`));
   }
