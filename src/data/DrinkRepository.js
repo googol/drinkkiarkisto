@@ -6,7 +6,7 @@ function getIngredientAmount(dbRow) {
 }
 
 function getInsertDrinkSql(drink) {
-  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type}, 'true', 1) RETURNING id`;
+  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type.id}, 'true', 1) RETURNING id`;
 }
 
 function getInsertDrinkIngredientSql(drinkId, ingredient) {
@@ -90,7 +90,7 @@ export class DrinkRepository {
     }
     const ingredients = drink.ingredients || [];
     return usingConnectTransaction(this.connectionString, client =>
-      client.queryAsync(sql`UPDATE drinks SET primaryName=${drink.primaryName}, preparation=${drink.preparation}, type=${drink.type} WHERE id=${id}`)
+      client.queryAsync(sql`UPDATE drinks SET primaryName=${drink.primaryName}, preparation=${drink.preparation}, type=${drink.type.id} WHERE id=${id}`)
         .then(() => client.queryAsync(sql`DELETE FROM drinkIngredients WHERE drink=${id}`))
         .then(() => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(id, ingredient)))))
         .return(id));

@@ -75,7 +75,7 @@ export function getDrinkFromRequestBody(req, res, next) {
       primaryName: body.drinkName,
       preparation: body.drinkPreparation,
       ingredients: getIngredientAmounts(body),
-      type: body.drinkType
+      type: { id: body.drinkType }
     };
   } catch (e) {
     err = e;
