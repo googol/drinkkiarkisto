@@ -1,5 +1,5 @@
 import Promise from 'bluebird'
-import { render, setLocals } from './helpers'
+import { render, setLocals, created, updated, deleted } from './helpers'
 
 function findSingleDrinkOr404(drinkRepo, id) {
   return drinkRepo.findById(id).then(drink => {
@@ -57,11 +57,12 @@ export class DrinksController {
 
   updateSingle(req, res, next) {
     const id = req.params.drinkId;
+    const drinkUrl = `/drinks/${id}/`;
     const drink = res.locals.drink;
     Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type)
-        ? res.redirect(`/drinks/${id}/`)
+        ? res.redirect(drinkUrl + '?edit')
         : this.drinkRepo.updateById(id, drink)
-            .then(() => res.redirect(`/drinks/${id}/`)))
+            .then(() => updated(res, drinkUrl)))
       .catch(next);
   }
 
@@ -70,14 +71,14 @@ export class DrinksController {
     Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type)
         ? res.redirect('/drinks/?new')
         : this.drinkRepo.addDrink(drink)
-            .then(drinkId => res.redirect(`/drinks/${drinkId}/`)))
+            .then(drinkId => created(res, `/drinks/${drinkId}/`)))
       .catch(next);
   }
 
   deleteSingle(req, res, next) {
     const id = req.params.drinkId;
     this.drinkRepo.deleteById(id)
-      .then(drinkId => res.redirect('/'))
+      .then(drinkId => deleted(res, '/'))
       .catch(next);
   }
 }
