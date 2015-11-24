@@ -61,8 +61,28 @@ Valmis ohjelmisto ajetaan herokussa. Jatkuvan integroinnin palvelu Travis kään
 \includegraphics[width=\textwidth]{relation-diagram}
 
 \section{Järjestelmän yleisrakenne}
-TBD\ldots{}
-
+\subsection{Lähdetiedostojen kansiorakenne}
+\begin{description}
+  \item[.editorconfig] Tekstieditorien asetuksia tälle projektille. Katso: \url{http://editorconfig.org/}
+  \item[.travis.yml] Travis CI -konfiguraatio automaattisille buildeille. Katso: \url{https://travis-ci.org/}
+  \item[Vagrantfile] Vagrant-kehitysympäristön konfiguraatio
+  \item[bootstrap.js] Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin.
+  \item[doc/] Dokumentaation lähteet
+  \item[scripts/] Apuriskriptejä kehitysympäristöön
+  \item[sql/] Sql-skriptit mm. tietokannan, taulujen ja testidatan luontiin, sekä niiden poistamiseen
+  \item[src/] Lähdekoodi ohjelmistolle.
+  \item[src/controllers.js] Serverin controllerien moduuli. Kokoaa src/controllers-kansiossa olevat luokat yhteen.
+  \item[src/controllers/] Serverin controlleriluokat erillisissä tiedostoissa.
+  \item[src/data.js] Tietokantayhteyksien moduuli. Kokoaa src/data-kansiossa olevat luokat yhteen.
+  \item[src/data/] Tietokantayhteyksien luokat yksittäisissä tiedostoissa.
+  \item[src/middleware.js] Serverin middelewaret. Julkaisee serverin reiteille omia middlewareja, sekä funktion joka lisää serverin yleiset middlewaret serverille.
+  \item[src/routes.js] Serverin reititystiedot.
+  \item[src/server.js] Serverin päätiedosto. Konfiguroi serverin ja käynnistää sen.
+  \item[src/validation.js] Serveripään datavalidoinnin moduuli. Kokoaa src/validation-kansiossa olevat luokat ja funktiot yhteen.
+  \item[src/validation/] Luokkia ja funktioita datan validoimiseen serverissä.
+  \item[src/views/] Näkymät ejs-templateina
+  \item[vagrant/] Konfiguraatiotiedostoja kehitysympäristöön
+\end{description}
 \section{Käyttöliittymä ja järjestelmän komponentit}
 TBD\ldots{}
 

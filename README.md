@@ -18,23 +18,41 @@ Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://pe
 Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sekä virtualbox, ja aja `vagrant up` projektikansiossa. Tämä luo virtuaalikoneen jossa voit ajaa ohjelmaa. Komennolla `vagrant ssh` saat yhteyden virtuaalikoneeseen, jossa voit komennolla `npm start` käynnistää serverin. Serveri on tavoitettavissa osoittessa http://localhost:3000/ niin virtuaalikoneella kuin hostilla.
 
 ## Koodin rakenne
+- .editorconfig
+  - Tekstieditorien asetuksia tälle projektille. Katso: \url{http://editorconfig.org/}
+- .travis.yml
+  - Travis CI -konfiguraatio automaattisille buildeille. Katso: \url{https://travis-ci.org/}
+- Vagrantfile
+  - Vagrant-kehitysympäristön konfiguraatio
 - bootstrap.js
   - Koodin entry-point. Initialisoi babelin joka kääntää es6-koodia vanhempaan syntaksiin.
-- src/
-  - Serverin tiedostot.
-- src/server.js
-  - Serverin päätiedosto. Konfiguroi serverin ja sen reitit ja käynnistää sen.
-- src/data.js
-  - Tietokantayhteyksien moduuli
-- src/data/
-  - Tietokantayhteyksien luokat yksittäisissä tiedostoissa
-- src/views/
-  - Näkymät ejs-templateina
-- scripts/
-  - Apuriskriptejä kehitysympäristöön
-- vagrant/
-  - Konfiguraatiotiedostoja kehitysympäristöön
-- sql/
-  - Sql-skriptit mm. tietokannan, taulujen ja testidatan luontiin, sekä niiden poistamiseen
 - doc/
   - Dokumentaation lähteet
+- scripts/
+  - Apuriskriptejä kehitysympäristöön
+- sql/
+  - Sql-skriptit mm. tietokannan, taulujen ja testidatan luontiin, sekä niiden poistamiseen
+- src/
+  - Lähdekoodi ohjelmistolle.
+- src/controllers.js
+  - Serverin controllerien moduuli. Kokoaa src/controllers-kansiossa olevat luokat yhteen.
+- src/controllers/
+  - Serverin controlleriluokat erillisissä tiedostoissa.
+- src/data.js
+  - Tietokantayhteyksien moduuli. Kokoaa src/data-kansiossa olevat luokat yhteen.
+- src/data/
+  - Tietokantayhteyksien luokat yksittäisissä tiedostoissa.
+- src/middleware.js
+  - Serverin middelewaret. Julkaisee serverin reiteille omia middlewareja, sekä funktion joka lisää serverin yleiset middlewaret serverille.
+- src/routes.js
+  - Serverin reititystiedot.
+- src/server.js
+  - Serverin päätiedosto. Konfiguroi serverin ja käynnistää sen.
+- src/validation.js
+  - Serveripään datavalidoinnin moduuli. Kokoaa src/validation-kansiossa olevat luokat ja funktiot yhteen.
+- src/validation/
+  - Luokkia ja funktioita datan validoimiseen serverissä.
+- src/views/
+  - Näkymät ejs-templateina
+- vagrant/
+  - Konfiguraatiotiedostoja kehitysympäristöön
