@@ -32,8 +32,7 @@ export function requireUserOrLoginFactory(profileController) {
       next();
     } else {
       req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
-      req.flash('redirect'); // Remove any previous redirect value first
-      req.flash('redirect', req.originalUrl);
+      req.session.returnTo = req.originalUrl;
       res.status(401);
       profileController.showLoginPage(req, res);
     }
@@ -46,8 +45,7 @@ export function requireAdminOrLoginFactory(profileController) {
       next();
     } else {
       req.flash('error', 'Pyytämäsi sivu vaatii ylläpitäjän oikeudet.');
-      req.flash('redirect'); // Remove any previous redirect value first
-      req.flash('redirect', req.originalUrl);
+      req.session.returnTo = req.originalUrl;
       res.status(401);
       profileController.showLoginPage(req, res);
     }

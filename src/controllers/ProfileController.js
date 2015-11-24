@@ -17,24 +17,7 @@ export class ProfileController {
   }
 
   login(req, res, next) {
-    const validationFunc = (err, user, info) => {
-      if (err) {
-        next(err);
-      } else if (!user) {
-        req.flash('error', info.message);
-        res.redirect('/login');
-      } else {
-        req.logIn(user, err => {
-          if (err) {
-            next(err);
-          } else {
-            const redirectTo = req.flash('redirect')[0] || '/';
-            res.redirect(redirectTo);
-          }
-        });
-      }
-    };
-    const authenticationFunc = this.passport.authenticate('local', validationFunc);
+    const authenticationFunc = this.passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login', failureFlash: true });
 
     authenticationFunc(req, res, next);
   }
