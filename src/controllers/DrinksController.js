@@ -1,4 +1,5 @@
 import Promise from 'bluebird'
+import { render, setLocals } from './helpers'
 
 function findSingleDrinkOr404(drinkRepo, id) {
   return drinkRepo.findById(id).then(drink => {
@@ -36,37 +37,37 @@ export class DrinksController {
   }
 
   showList(req, res, next) {
-    const user = req.user;
     this.drinkRepo.getAll()
-      .then(result => res.render('index', { drinks: result, user: user }))
+      .then(result => res.locals.drinks = result)
+      .then(() => render(res, 'index'))
       .catch(err => next(err));
   }
 
   showSingle(req, res, next) {
     const id = req.params.drinkId;
-    const user = req.user;
     findSingleDrinkOr404(this.drinkRepo, id)
-      .then(drink => res.render('singledrink', { drink: drink, user: user }))
+      .then(drink => setLocals(res, { drink }))
+      .then(() => render(res, 'singledrink'))
       .catch(err => next(err));
   }
 
   showSingleEditor(req, res, next) {
     const id = req.params.drinkId;
-    const user = req.user;
     Promise.join(
       findSingleDrinkOr404(this.drinkRepo, id),
       this.drinkTypeRepo.getAll(),
       this.ingredientRepo.getAllWithAmountsForDrink(id),
-      (drink, drinkTypes, ingredients) => res.render('editdrink', { drink: drink, drinkTypes: drinkTypes, ingredients: ingredients, user: user }))
+      (drink, drinkTypes, ingredients) => setLocals(res, { drink, drinkTypes, ingredients }))
+      .then(() => render(res, 'editdrink'))
       .catch(err => next(err));
   }
 
   showNewEditor(req, res, next) {
-    const user = req.user;
     Promise.join(
       this.ingredientRepo.getAll(),
       this.drinkTypeRepo.getAll(),
-      (ingredients, drinkTypes) => res.render('newdrink', { ingredients: ingredients, drinkTypes: drinkTypes, user: user }))
+      (ingredients, drinkTypes) => setLocals(res, { ingredients, drinkTypes }))
+      .then(() => render(res, 'newdrink'))
       .catch(err => next(err));
   }
 

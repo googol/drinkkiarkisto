@@ -52,6 +52,13 @@ export function requireAdminOrLoginFactory(profileController) {
   };
 }
 
+function setCommonLocals(req, res, next) {
+  res.locals.user = req.user;
+  res.locals.errors = req.flash('error');
+  res.locals.successes = req.flash('success');
+  next();
+}
+
 export function configureMiddleware(app, connectionString, cookieSecret) {
   const PgSession = connectPgSimple(session);
   const userRepo = new UserRepository(connectionString);
@@ -94,4 +101,5 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
   app.use(flash());
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(setCommonLocals);
 }

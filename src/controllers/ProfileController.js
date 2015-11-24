@@ -1,4 +1,5 @@
 import Promise from 'bluebird'
+import { render } from './helpers'
 
 export class ProfileController {
   constructor(passport, userRepo) {
@@ -7,12 +8,12 @@ export class ProfileController {
   }
 
   showRegistrationPage(req, res, next) {
-    Promise.try(() => res.render('register'))
+    render(res, 'register')
       .catch(next);
   }
 
   showLoginPage(req, res, next) {
-    Promise.try(() => res.render('login', { user: req.user, errors: req.flash('error') }))
+    render(res, 'login')
       .catch(next);
   }
 
@@ -30,7 +31,7 @@ export class ProfileController {
   }
 
   showProfilePage(req, res, next) {
-    Promise.try(() => res.render('profile', { user: req.user, successes: req.flash('success'), errors: req.flash('error') }))
+    render(res, 'profile')
       .catch(next);
   }
 
