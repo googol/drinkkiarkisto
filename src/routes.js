@@ -4,25 +4,10 @@ import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserReposit
 import { DrinksController, ProfileController } from './controllers'
 import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory, urlencodedParser } from './middleware'
 
-function getIngredientAmounts(body) {
-  return Object.keys(body)
-    .map(key => { const match = key.match(/ingredient-(\d+)-amount/); return match && { id: match[1], amount: body[match[0]] } || undefined })
-    .filter(value => value && value.amount);
-}
-
-function getDrinkFromRequestBody(body) {
-  return {
-    primaryName: body.drinkName,
-    preparation: body.drinkPreparation,
-    ingredients: getIngredientAmounts(body),
-    type: body.drinkType
-  };
-}
-
 function ifHasQueryParam(param, then, otherwise) {
-  return (req, res) => req.query[param] !== undefined
-    ? then(req, res)
-    : otherwise(req, res);
+  return (req, res, next) => req.query[param] !== undefined
+    ? then(req, res, next)
+    : otherwise(req, res, next);
 }
 
 export function configureRoutes(app, connectionString) {
@@ -38,35 +23,35 @@ export function configureRoutes(app, connectionString) {
   const requireAdminOrLogin = requireAdminOrLoginFactory(profileController);
 
   app.route('/')
-    .get((req, res) => drinksController.showList(res, req.user));
+    .get((req, res, next) => drinksController.showList(req, res, next));
 
   app.route('/drinks')
     .get(ifHasQueryParam('new',
-      (req, res) => requireUserOrLogin(req, res, () => drinksController.showNewEditor(res, req.user)),
-      (req, res) => res.redirect('/')))
-    .post(requireUser, urlencodedParser, (req, res) => drinksController.addNew(getDrinkFromRequestBody(req.body), res));
+      (req, res, next) => requireUserOrLogin(req, res, () => drinksController.showNewEditor(req, res, next)),
+      (req, res, next) => res.redirect('/')))
+    .post(requireUser, urlencodedParser, (req, res, next) => drinksController.addNew(req, res, next));
 
   app.route('/drinks/:drinkId')
     .get(ifHasQueryParam('edit',
-      (req, res) => requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req.params.drinkId, res, req.user)),
-      (req, res) => drinksController.showSingle(req.params.drinkId, res, req.user)))
-    .put(requireAdmin, urlencodedParser, (req, res) => drinksController.updateSingle(req.params.drinkId, getDrinkFromRequestBody(req.body), res))
-    .delete(requireAdmin, (req, res) => drinksController.deleteSingle(req.params.drinkId, res));
+      (req, res, next) => requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req, res, next)),
+      (req, res, next) => drinksController.showSingle(req, res, next)))
+    .put(requireAdmin, urlencodedParser, (req, res, next) => drinksController.updateSingle(req, res, next))
+    .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
 
   app.route('/register')
-    .get((req, res) => profileController.showRegistrationPage(res));
+    .get((req, res, next) => profileController.showRegistrationPage(req, res, next));
 
   app.route('/login')
-    .get((req, res) => profileController.showLoginPage(req, res))
+    .get((req, res, next) => profileController.showLoginPage(req, res, next))
     .post(urlencodedParser, (req, res, next) => profileController.login(req, res, next));
 
   app.route('/logout')
-    .post((req, res) => profileController.logout(req, res));
+    .post((req, res, next) => profileController.logout(req, res, next));
 
   app.route('/profile')
-    .get(requireUserOrLogin, (req, res) => profileController.showProfilePage(req.user, req, res))
-    .post(requireUser, urlencodedParser, (req, res) => profileController.updatePassword(req.user, req.body.passwordCurrent, req.body.passwordNew, req.body.passwordNewConfirm, req, res))
-    .delete(requireUser, (req, res) => profileController.deleteProfile(req, res));
+    .get(requireUserOrLogin, (req, res, next) => profileController.showProfilePage(req, res, next))
+    .post(requireUser, urlencodedParser, (req, res, next) => profileController.updatePassword(req, res, next))
+    .delete(requireUser, (req, res, next) => profileController.deleteProfile(req, res, next));
 
   app.use('/', express.static(__dirname + '/../public'));
 }

@@ -1,15 +1,19 @@
+import Promise from 'bluebird'
+
 export class ProfileController {
   constructor(passport, userRepo) {
     this.passport = passport;
     this.userRepo = userRepo;
   }
 
-  showRegistrationPage(res) {
-    res.render('register');
+  showRegistrationPage(req, res, next) {
+    Promise.try(() => res.render('register'))
+      .catch(next);
   }
 
-  showLoginPage(req, res) {
-    res.render('login', { user: req.user, errors: req.flash('error') });
+  showLoginPage(req, res, next) {
+    Promise.try(() => res.render('login', { user: req.user, errors: req.flash('error') }))
+      .catch(next);
   }
 
   login(req, res, next) {
@@ -35,16 +39,24 @@ export class ProfileController {
     authenticationFunc(req, res, next);
   }
 
-  logout(req, res) {
-    req.logout();
-    res.redirect('/');
+  logout(req, res, next) {
+    Promise.try(() => {
+      req.logout();
+      res.redirect('/');
+    }).catch(next);
   }
 
-  showProfilePage(user, req, res) {
-    res.render('profile', { user: user, successes: req.flash('success'), errors: req.flash('error') });
+  showProfilePage(req, res, next) {
+    Promise.try(() => res.render('profile', { user: req.user, successes: req.flash('success'), errors: req.flash('error') }))
+      .catch(next);
   }
 
-  updatePassword(user, passwordCurrent, passwordNew, passwordNewConfirm, req, res) {
+  updatePassword(req, res, next) {
+    const user = req.user;
+    const passwordCurrent = req.body.passwordCurrent;
+    const passwordNew = req.body.passwordNew;
+    const passwordNewConfirm = req.body.passwordNewConfirm;
+
     user.validatePassword(passwordCurrent)
       .then(isValid => {
         let errors = 0;
@@ -57,13 +69,15 @@ export class ProfileController {
             .then(() => req.flash('success', 'Salasana vaihdettu.'));
         }
       })
-      .then(() => res.redirect('/profile'));
+      .then(() => res.redirect('/profile'))
+      .catch(next);
   }
 
-  deleteProfile(req, res) {
+  deleteProfile(req, res, next) {
     const user = req.user;
-    req.logout();
-    this.userRepo.deleteById(user.id)
-      .then(() => res.redirect('/'));
+    Promise.try(() => req.logout())
+      .then(() => this.userRepo.deleteById(user.id))
+      .then(() => res.redirect('/'))
+      .catch(next);
   }
 }
