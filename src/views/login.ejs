@@ -1,7 +1,5 @@
 <% include head %>
-<div class="container">
   <h1>Kirjaudu sisään</h1>
-  <% include flash %>
   <form action="/login" method="post" class="form-horizontal">
     <div class="form-group">
       <label for="username" class="col-sm-2 control-label">Sähköpostiosoite</label>
@@ -18,5 +16,4 @@
     <button type="submit" class="btn btn-primary">Kirjaudu sisään</button>
     <a class="btn btn-link" href="/">Peruuta</a>
   </form>
-</div>
 <% include foot %>

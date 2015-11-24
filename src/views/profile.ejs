@@ -1,7 +1,5 @@
 <% include head %>
-<div class="container">
   <h1>Profiilisi</h1>
-  <% include flash %>
   <p>Sähköpostiosoite: <%= locals.user.email %></p>
   <% if(locals.user.isAdmin) { %>
   <p>Sinulla on ylläpito-oikeudet.</p>
@@ -26,5 +24,4 @@
   <form action="/profile?_method=delete" method="post">
     <button class="btn btn-danger">Poista profiili</button>
   </form>
-</div>
 <% include foot %>
