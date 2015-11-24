@@ -13,22 +13,6 @@ function findSingleDrinkOr404(drinkRepo, id) {
   });
 }
 
-function getIngredientAmounts(body) {
-  return Object.keys(body)
-    .map(key => key.match(/ingredient-(\d+)-amount/))
-    .map(match => match && { id: match[1], amount: body[match[0]] } || undefined)
-    .filter(value => value && value.amount);
-}
-
-const getDrinkFromRequestBody = Promise.method(body => {
-  return {
-    primaryName: body.drinkName,
-    preparation: body.drinkPreparation,
-    ingredients: getIngredientAmounts(body),
-    type: body.drinkType
-  };
-});
-
 export class DrinksController {
   constructor(drinkRepo, drinkTypeRepo, ingredientRepo) {
     this.drinkRepo = drinkRepo;
@@ -73,8 +57,8 @@ export class DrinksController {
 
   updateSingle(req, res, next) {
     const id = req.params.drinkId;
-    getDrinkFromRequestBody(req.body)
-      .then(drink => (!drink.primaryName || !drink.preparation || !drink.type)
+    const drink = res.locals.drink;
+    Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type)
         ? res.redirect(`/drinks/${id}/`)
         : this.drinkRepo.updateById(id, drink)
             .then(() => res.redirect(`/drinks/${id}/`)))
@@ -82,8 +66,8 @@ export class DrinksController {
   }
 
   addNew(req, res, next) {
-    getDrinkFromRequestBody(req.body)
-      .then(drink => (!drink.primaryName || !drink.preparation || !drink.type)
+    const drink = res.locals.drink;
+    Promise.try(() => (!drink.primaryName || !drink.preparation || !drink.type)
         ? res.redirect('/drinks/?new')
         : this.drinkRepo.addDrink(drink)
             .then(drinkId => res.redirect(`/drinks/${drinkId}/`)))

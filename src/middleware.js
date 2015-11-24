@@ -59,6 +59,31 @@ function setCommonLocals(req, res, next) {
   next();
 }
 
+function getIngredientAmounts(body) {
+  return Object.keys(body)
+    .map(key => key.match(/ingredient-(\d+)-amount/))
+    .map(match => match && { id: match[1], amount: body[match[0]] } || undefined)
+    .filter(value => value && value.amount);
+}
+
+export function getDrinkFromRequestBody(req, res, next) {
+  let err = undefined;
+
+  try {
+    const body = req.body;
+    res.locals.drink = {
+      primaryName: body.drinkName,
+      preparation: body.drinkPreparation,
+      ingredients: getIngredientAmounts(body),
+      type: body.drinkType
+    };
+  } catch (e) {
+    err = e;
+  } finally {
+    next(err);
+  }
+}
+
 export function configureMiddleware(app, connectionString, cookieSecret) {
   const PgSession = connectPgSimple(session);
   const userRepo = new UserRepository(connectionString);
