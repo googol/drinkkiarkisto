@@ -14,6 +14,13 @@
       </div>
     </div>
     <div class="form-group">
+      <label for="additionalNames" class="col-sm-2 control-label">Muut nimet joilla drinkki tunnetaan</label>
+      <div class="col-sm-8">
+        <textarea rows="2" class="form-control" id="additionalNames" name="additionalNames" aria-describedby="additionalNamesHelp"><%= locals.drink.additionalNames.join('\n') %></textarea>
+        <span id="additionalNamesHelp" class="help-block">Syötä jokainen nimi omalle rivilleen</span>
+      </div>
+    </div>
+    <div class="form-group">
       <label for="drinkType" class="col-sm-2 control-label">Tyyppi</label>
       <div class="col-sm-8">
         <select id="drinkType" name="drinkType" class="form-control">

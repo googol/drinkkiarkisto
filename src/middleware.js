@@ -60,11 +60,23 @@ function setCommonLocals(req, res, next) {
   next();
 }
 
+function removeDuplicates(input) {
+  return Array.from(new Set(input));
+}
+
 function getIngredientAmounts(body) {
   return Object.keys(body)
     .map(key => key.match(/ingredient-(\d+)-amount/))
     .map(match => match && { id: match[1], amount: Number.parseInt(body[match[0]], 10) } || undefined)
     .filter(value => value && value.amount);
+}
+
+function getAdditionalDrinkNames(body) {
+  if (!body.additionalNames) {
+    return [];
+  }
+
+  return removeDuplicates(body.additionalNames.split('\n').map(name => name.trim()).filter(name => name));
 }
 
 export function getDrinkFromRequestBody(req, res, next) {
@@ -76,6 +88,7 @@ export function getDrinkFromRequestBody(req, res, next) {
       primaryName: body.drinkName,
       preparation: body.drinkPreparation,
       ingredients: getIngredientAmounts(body),
+      additionalNames: getAdditionalDrinkNames(body),
       type: { id: body.drinkType }
     };
   } catch (e) {

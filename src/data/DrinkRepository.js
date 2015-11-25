@@ -9,8 +9,14 @@ function getInsertDrinkSql(drink) {
   return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type.id}, 'true', 1) RETURNING id`;
 }
 
-function getInsertDrinkIngredientSql(drinkId, ingredient) {
-  return sql`INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (${drinkId}, ${ingredient.id}, ${ingredient.amount})`;
+function insertIngredientsForDrink(client, drinkId, ingredients) {
+  return Promise.all(ingredients.map(ingredient =>
+    client.queryAsync(sql`INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (${drinkId}, ${ingredient.id}, ${ingredient.amount})`)));
+}
+
+function insertAdditionalNamesForDrink(client, drinkId, additionalNames) {
+  return Promise.all(additionalNames.map(additionalName =>
+    client.queryAsync(sql`INSERT INTO additionalDrinkNames (drink, name) VALUES (${drinkId}, ${additionalName})`)));
 }
 
 export class DrinkRepository {
@@ -71,12 +77,15 @@ export class DrinkRepository {
       return Promise.reject(new Error('The preparation instruction for the drink is required.'));
     }
     const ingredients = drink.ingredients || [];
+    const additionalNames = drink.additionalNames || [];
 
     return usingConnectTransaction(this.connectionString, function(client) {
       return client.queryAsync(getInsertDrinkSql(drink))
         .then(createResult => createResult.rows[0].id)
-        .then(drinkId => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(drinkId, ingredient))))
-          .return(drinkId));
+        .then(drinkId => Promise.join(
+          insertIngredientsForDrink(client, drinkId, ingredients),
+          insertAdditionalNamesForDrink(client, drinkId, additionalNames),
+          () => drinkId));
     });
   }
 
@@ -93,10 +102,16 @@ export class DrinkRepository {
       return Promise.reject(new Error('The preparation instruction for the drink is required.'));
     }
     const ingredients = drink.ingredients || [];
+    const additionalNames = drink.additionalNames || [];
+
     return usingConnectTransaction(this.connectionString, client =>
       client.queryAsync(sql`UPDATE drinks SET primaryName=${drink.primaryName}, preparation=${drink.preparation}, type=${drink.type.id} WHERE id=${id}`)
-        .then(() => client.queryAsync(sql`DELETE FROM drinkIngredients WHERE drink=${id}`))
-        .then(() => Promise.all(ingredients.map(ingredient => client.queryAsync(getInsertDrinkIngredientSql(id, ingredient)))))
+        .then(() => Promise.join(
+          client.queryAsync(sql`DELETE FROM drinkIngredients WHERE drink=${id}`),
+          client.queryAsync(sql`DELETE FROM additionalDrinkNames WHERE drink=${id}`)))
+        .then(() => Promise.join(
+          insertIngredientsForDrink(client, id, ingredients),
+          insertAdditionalNamesForDrink(client, id, additionalNames)))
         .return(id));
   }
 }
