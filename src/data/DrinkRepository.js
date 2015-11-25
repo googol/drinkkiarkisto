@@ -1,5 +1,5 @@
 import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 
 function getIngredientAmount(dbRow) {
   return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };

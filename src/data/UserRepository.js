@@ -1,6 +1,6 @@
 import { usingConnect, sql } from './pg-helpers'
-import Promise from 'bluebird';
-import crypto from 'crypto';
+import Promise from 'bluebird'
+import crypto from 'crypto'
 import scmp from 'scmp'
 
 const pbkdf2 = Promise.promisify(crypto.pbkdf2, crypto);
@@ -30,7 +30,7 @@ class User {
 function generatePasswordHashAndSalt(password) {
   return randomBytes(32)
     .then(buffer => buffer.toString('hex'))
-    .then(salt => hashPassword(password, salt).then(passwordHash => [passwordHash, salt]))
+    .then(salt => hashPassword(password, salt).then(passwordHash => [passwordHash, salt]));
 }
 
 export class UserRepository {

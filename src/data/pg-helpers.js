@@ -1,5 +1,5 @@
-import pg from 'pg';
-import Promise from 'bluebird';
+import pg from 'pg'
+import Promise from 'bluebird'
 
 Promise.promisifyAll(pg, { filter: function(methodName) { return methodName === 'connect'; }, multiArgs: true });
 Promise.promisifyAll(pg);

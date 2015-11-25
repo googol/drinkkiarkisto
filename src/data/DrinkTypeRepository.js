@@ -1,5 +1,5 @@
 import { connect, sql } from './pg-helpers'
-import Promise from 'bluebird';
+import Promise from 'bluebird'
 
 export class DrinkTypeRepository {
   constructor(connectionString) {
