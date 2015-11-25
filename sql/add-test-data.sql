@@ -14,13 +14,17 @@ BEGIN;
   INSERT INTO ingredients (name, abv) VALUES ('Karpalolikööri', 20);
 
   INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Martini', 'Kaada ainesosat sekoituslasiin jossa on jäitä. Sekoita hyvin. Siivilöi jäähdytettyyn martinilasiin. Koristele oliivilla.', 2, 1, 'true');
-  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Karpalobooli', 'Sekoita ainesosat boolimaljassa. Lisää jäitä ja marjoja koristeeksi.', 3, 1, 'true');
-
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (1, 2, 60);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (1, 3, 10);
 
+  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Karpalobooli', 'Sekoita ainesosat boolimaljassa. Lisää jäitä ja marjoja koristeeksi.', 3, 1, 'true');
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 1, 500);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 4, 500);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 5, 1500);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 6, 750);
+
+  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Vodka Martini', 'Kaada ainesosat sekoituslasiin jossa on jäitä. Sekoita hyvin. Siivilöi jäähdytettyyn martinilasiin. Koristele oliivilla.', 2, 1, 'true');
+  INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (3, 1, 60);
+  INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (3, 3, 10);
+  INSERT INTO additionalDrinkNames (drink, name) VALUES (3, 'Vodkatini');
 COMMIT;
