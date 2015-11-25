@@ -19,9 +19,11 @@ export class DrinkRepository {
   }
 
   getAll() {
-    return usingConnect(this.connectionString, function(client) {
-      return client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id')
-        .then(function(result) {
+    return usingConnect(this.connectionString, client =>
+      Promise.join(
+        client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id'),
+        client.queryAsync('SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink'),
+        function(result, additionalDrinkNames) {
           const transformed = new Map();
           result.rows.forEach(function(currentRow) {
             if (!transformed.has(currentRow.id)) {
@@ -30,6 +32,7 @@ export class DrinkRepository {
                 primaryName: currentRow.primaryname,
                 preparation: currentRow.preparation,
                 type: { id: currentRow.typeid, name: currentRow.typename, description: currentRow.typedescription },
+                additionalDrinkNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
                 ingredients: []
               });
             }
@@ -40,24 +43,25 @@ export class DrinkRepository {
             }
           });
           return Array.from(transformed.values());
-        });
-    });
+        }));
   }
 
   findById(id) {
-    return usingConnect(this.connectionString, function(client) {
-      return client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`)
-        .then(result => result.rows.length === 0
+    return usingConnect(this.connectionString, client =>
+      Promise.join(
+        client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription FROM drinks LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`),
+        client.queryAsync(sql`SELECT name FROM additionalDrinkNames WHERE drink=${id}`),
+        (result, additionalNames) => result.rows.length === 0
           ? undefined
           : {
               id: result.rows[0].id,
               primaryName: result.rows[0].primaryname,
               preparation: result.rows[0].preparation,
               type: { id: result.rows[0].typeid, name: result.rows[0].typename, description: result.rows[0].typedescription },
+              additionalDrinkNames: additionalNames.rows.map(drinkName => drinkName.name),
               ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
-            },
-          err => undefined);
-    });
+            })
+        .catch(err => undefined));
   }
 
   addDrink(drink) {
