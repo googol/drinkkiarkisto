@@ -18,6 +18,7 @@ class User {
     this.passwordHash = userData.passwordhash;
     this.salt = userData.salt;
     this.isAdmin = userData.admin;
+    this.active = userData.active;
   }
 
   validatePassword(password) {

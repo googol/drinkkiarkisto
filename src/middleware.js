@@ -114,7 +114,7 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
   const localStrategy = new LocalStrategy(function(email, password, done) {
     userRepo.findByEmail(email)
       .then(user => {
-        if (!user) {
+        if (!user || !user.active) {
           return done(null, false, { message: 'Väärä sähköpostiosoite' });
         }
 

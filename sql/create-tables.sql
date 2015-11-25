@@ -4,7 +4,8 @@ BEGIN;
     email text NOT NULL UNIQUE,
     passwordHash text NOT NULL,
     salt text NOT NULL,
-    admin boolean NOT NULL);
+    admin boolean NOT NULL DEFAULT 'false',
+    active boolean NOT NULL DEFAULT 'true');
 
   CREATE TABLE drinktypes (
     id serial NOT NULL PRIMARY KEY,
