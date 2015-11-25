@@ -24,6 +24,9 @@ function formatAmount(amount) {
   </div>
   <% } %>
 </h1>
+<% if (locals.user && locals.user.isAdmin) { %>
+<em><%= locals.drink.writer.email %></em>
+<% } %>
 <% if (locals.drink.additionalNames.length > 0) { %>
 <small>Tunnetaan myös <%= locals.drink.additionalNames.length === 1 ? 'nimellä' : 'nimillä' %>: <%= locals.drink.additionalNames.join(', ') %></small>
 <% } %>
