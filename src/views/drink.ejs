@@ -24,8 +24,8 @@ function formatAmount(amount) {
   </div>
   <% } %>
 </h1>
-<% if (locals.drink.additionalDrinkNames.length > 0) { %>
-<small>Tunnetaan myös <%= locals.drink.additionalDrinkNames.length === 1 ? 'nimellä' : 'nimillä' %>: <%= locals.drink.additionalDrinkNames.join(', ') %></small>
+<% if (locals.drink.additionalNames.length > 0) { %>
+<small>Tunnetaan myös <%= locals.drink.additionalNames.length === 1 ? 'nimellä' : 'nimillä' %>: <%= locals.drink.additionalNames.join(', ') %></small>
 <% } %>
 <div class="row">
   <div class="col-md-6">

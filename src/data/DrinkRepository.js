@@ -32,7 +32,7 @@ export class DrinkRepository {
                 primaryName: currentRow.primaryname,
                 preparation: currentRow.preparation,
                 type: { id: currentRow.typeid, name: currentRow.typename, description: currentRow.typedescription },
-                additionalDrinkNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
+                additionalNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
                 ingredients: []
               });
             }
@@ -58,7 +58,7 @@ export class DrinkRepository {
               primaryName: result.rows[0].primaryname,
               preparation: result.rows[0].preparation,
               type: { id: result.rows[0].typeid, name: result.rows[0].typename, description: result.rows[0].typedescription },
-              additionalDrinkNames: additionalNames.rows.map(drinkName => drinkName.name),
+              additionalNames: additionalNames.rows.map(drinkName => drinkName.name),
               ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
             })
         .catch(err => undefined));
