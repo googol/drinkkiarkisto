@@ -72,7 +72,7 @@ export class DrinksController {
     const drink = res.locals.drink;
     const validator = new DrinkValidator();
 
-    validator.validate(drink, drinkUrl + '?edit')
+    validator.validate(drink, '/drinks/?new')
       .then(() => this.drinkRepo.addDrink(drink))
       .then(drinkId => created(res, `/drinks/${drinkId}/`))
       .catch(next);

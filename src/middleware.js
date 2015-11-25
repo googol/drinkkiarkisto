@@ -63,7 +63,7 @@ function setCommonLocals(req, res, next) {
 function getIngredientAmounts(body) {
   return Object.keys(body)
     .map(key => key.match(/ingredient-(\d+)-amount/))
-    .map(match => match && { id: match[1], amount: body[match[0]] } || undefined)
+    .map(match => match && { id: match[1], amount: Number.parseInt(body[match[0]], 10) } || undefined)
     .filter(value => value && value.amount);
 }
 
