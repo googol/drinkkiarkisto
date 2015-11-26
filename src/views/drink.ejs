@@ -23,6 +23,12 @@ function formatAmount(amount) {
     </form>
   </div>
   <% } %>
+  <% if (!locals.drink.accepted) { %>
+  <small>
+    <span title="Tätä drinkkiä ei ole vielä hyväksytty!" class="glyphicon glyphicon-alert" aria-hidden="true" />
+    <span class="sr-only">Tätä drinkkiä ei ole vielä hyväksytty!</span>
+  </small>
+  <% } %>
 </h1>
 <% if (locals.user && locals.user.isAdmin) { %>
 <em><%= locals.drink.writer.email %><%= locals.drink.writer.active ? '' : ' (deleted)' %></em>

@@ -1,7 +1,7 @@
 import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
 import Promise from 'bluebird'
 
-const selectAllDrinksSql = 'SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id';
+const selectAllDrinksSql = 'SELECT drinks.id, drinks.primaryName, drinks.preparation, drinks.accepted, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id';
 const selectAllAdditionalDrinkNamesSql = 'SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink';
 
 function getIngredientAmount(dbRow) {
@@ -39,7 +39,7 @@ export class DrinkRepository {
   }
 
   getAllAcceptedOrWrittenByUser(userId) {
-    const selectDrinks = sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.accepted='true' OR drinks.writer=${userId}`;
+    const selectDrinks = sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, drinks.accepted, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.accepted='true' OR drinks.writer=${userId}`;
     const selectAdditionalDrinkNames = sql`SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink AND (drinks.accepted='true' OR drinks.writer=${userId})`;
     return this.getMany(selectDrinks, selectAdditionalDrinkNames);
   }
@@ -60,6 +60,7 @@ export class DrinkRepository {
                 type: { id: currentRow.typeid, name: currentRow.typename, description: currentRow.typedescription },
                 additionalNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
                 writer: { id: currentRow.writerid, email: currentRow.writeremail, active: currentRow.writeractive },
+                accepted: currentRow.accepted,
                 ingredients: []
               });
             }
@@ -76,7 +77,7 @@ export class DrinkRepository {
   findById(id) {
     return usingConnect(this.connectionString, client =>
       Promise.join(
-        client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`),
+        client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, drinks.accepted, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`),
         client.queryAsync(sql`SELECT name FROM additionalDrinkNames WHERE drink=${id}`),
         (result, additionalNames) => result.rows.length === 0
           ? undefined
@@ -87,6 +88,7 @@ export class DrinkRepository {
               type: { id: result.rows[0].typeid, name: result.rows[0].typename, description: result.rows[0].typedescription },
               additionalNames: additionalNames.rows.map(drinkName => drinkName.name),
               writer: { id: result.rows[0].writerid, email: result.rows[0].writeremail, active: result.rows[0].writeractive },
+              accepted: result.rows[0].accepted,
               ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
             })
         .catch(err => undefined));
