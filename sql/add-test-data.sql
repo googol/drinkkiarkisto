@@ -28,4 +28,8 @@ BEGIN;
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (3, 1, 60);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (3, 3, 10);
   INSERT INTO additionalDrinkNames (drink, name) VALUES (3, 'Vodkatini');
+
+  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Cape Cod', 'Kaada ainesosat jäillä täytettyyn Highball-lasiin. Koristele limelohkolla.', 2, 2, 'false');
+  INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (4, 1, 10);
+  INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (4, 4, 40);
 COMMIT;
