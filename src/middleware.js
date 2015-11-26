@@ -89,6 +89,7 @@ export function getDrinkFromRequestBody(req, res, next) {
       preparation: body.drinkPreparation,
       ingredients: getIngredientAmounts(body),
       additionalNames: getAdditionalDrinkNames(body),
+      writer: req.user,
       type: { id: body.drinkType }
     };
   } catch (e) {

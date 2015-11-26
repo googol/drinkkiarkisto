@@ -6,7 +6,8 @@ function getIngredientAmount(dbRow) {
 }
 
 function getInsertDrinkSql(drink) {
-  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type.id}, 'true', 1) RETURNING id`;
+  const accepted = drink.writer.isAdmin;
+  return sql`INSERT INTO drinks (primaryName, preparation, type, accepted, writer) VALUES (${drink.primaryName}, ${drink.preparation}, ${drink.type.id}, ${accepted}, ${drink.writer.id}) RETURNING id`;
 }
 
 function insertIngredientsForDrink(client, drinkId, ingredients) {
