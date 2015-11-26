@@ -1,6 +1,9 @@
 import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
 import Promise from 'bluebird'
 
+const selectAllDrinksSql = 'SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id';
+const selectAllAdditionalDrinkNamesSql = 'SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink';
+
 function getIngredientAmount(dbRow) {
   return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };
 }
@@ -26,10 +29,18 @@ export class DrinkRepository {
   }
 
   getAll() {
+    return this.getMany('');
+  }
+
+  getAllAccepted() {
+    return this.getMany('drinks.accepted=\'true\'');
+  }
+
+  getMany(extraFilter) {
     return usingConnect(this.connectionString, client =>
       Promise.join(
-        client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id'),
-        client.queryAsync('SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink'),
+        client.queryAsync(selectAllDrinksSql + (extraFilter && ' WHERE '+extraFilter || '')),
+        client.queryAsync(selectAllAdditionalDrinkNamesSql + (extraFilter && ' AND '+extraFilter || '')),
         function(result, additionalDrinkNames) {
           const transformed = new Map();
           result.rows.forEach(function(currentRow) {
