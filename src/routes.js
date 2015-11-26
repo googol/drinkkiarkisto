@@ -35,6 +35,7 @@ export function configureRoutes(app, connectionString) {
     .get(ifHasQueryParam('edit',
       (req, res, next) => requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req, res, next)),
       (req, res, next) => drinksController.showSingle(req, res, next)))
+    .post(requireAdmin, urlencodedParser, (req, res, next) => drinksController.acceptSingle(req, res, next))
     .put(requireAdmin, urlencodedParser, getDrinkFromRequestBody, (req, res, next) => drinksController.updateSingle(req, res, next))
     .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
 

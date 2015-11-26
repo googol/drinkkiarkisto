@@ -138,4 +138,9 @@ export class DrinkRepository {
           insertAdditionalNamesForDrink(client, id, additionalNames)))
         .return(id));
   }
+
+  acceptById(id) {
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync(sql`UPDATE drinks SET accepted='true' WHERE id=${id}`));
+  }
 }

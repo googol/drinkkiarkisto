@@ -90,4 +90,12 @@ export class DrinksController {
       .then(drinkId => deleted(res, '/'))
       .catch(next);
   }
+
+  acceptSingle(req, res, next) {
+    const id = req.params.drinkId;
+    const accepted = !!req.body.accept;
+    (accepted ? this.drinkRepo.acceptById(id) : Promise.resolve())
+      .then(() => updated(res, `/drinks/${id}`))
+      .catch(next);
+  }
 }

@@ -15,6 +15,13 @@ function formatAmount(amount) {
   <a href="/drinks/<%= locals.drink.id %>/"><%= locals.drink.primaryName %></a>
   <% if (locals.user && locals.user.isAdmin) { %>
   <div class="btn-group">
+    <% if (!locals.drink.accepted) { %>
+    <form class="btn-group" action="/drinks/<%= locals.drink.id %>/" method="post">
+      <button name="accept" value="true" type="submit" class="btn btn-primary btn-xs">
+        <span class="glyphicon glyphicon-ok" />
+      </button>
+    </form>
+    <% } %>
     <a href="/drinks/<%= locals.drink.id %>/?edit" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil" /></a>
     <form class="btn-group" action="/drinks/<%= locals.drink.id %>/?_method=delete" method="post">
       <button type="submit" class="btn btn-default btn-xs">
@@ -22,12 +29,13 @@ function formatAmount(amount) {
       </button>
     </form>
   </div>
-  <% } %>
-  <% if (!locals.drink.accepted) { %>
-  <small>
-    <span title="Tätä drinkkiä ei ole vielä hyväksytty!" class="glyphicon glyphicon-alert" aria-hidden="true" />
-    <span class="sr-only">Tätä drinkkiä ei ole vielä hyväksytty!</span>
-  </small>
+  <% } else { %>
+    <% if (!locals.drink.accepted) { %>
+    <small>
+      <span title="Tätä drinkkiä ei ole vielä hyväksytty!" class="glyphicon glyphicon-alert" aria-hidden="true" />
+      <span class="sr-only">Tätä drinkkiä ei ole vielä hyväksytty!</span>
+    </small>
+    <% } %>
   <% } %>
 </h1>
 <% if (locals.user && locals.user.isAdmin) { %>
