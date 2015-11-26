@@ -18,7 +18,7 @@ BEGIN;
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (1, 2, 60);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (1, 3, 10);
 
-  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Karpalobooli', 'Sekoita ainesosat boolimaljassa. Lisää jäitä ja marjoja koristeeksi.', 3, 1, 'true');
+  INSERT INTO drinks (primaryName, preparation, type, writer, accepted) VALUES ('Karpalobooli', 'Sekoita ainesosat boolimaljassa. Lisää jäitä ja marjoja koristeeksi.', 3, 3, 'true');
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 1, 500);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 4, 500);
   INSERT INTO drinkIngredients (drink, ingredient, amount) VALUES (2, 5, 1500);
