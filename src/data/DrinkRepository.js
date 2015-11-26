@@ -28,7 +28,7 @@ export class DrinkRepository {
   getAll() {
     return usingConnect(this.connectionString, client =>
       Promise.join(
-        client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id'),
+        client.queryAsync('SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id'),
         client.queryAsync('SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink'),
         function(result, additionalDrinkNames) {
           const transformed = new Map();
@@ -40,7 +40,7 @@ export class DrinkRepository {
                 preparation: currentRow.preparation,
                 type: { id: currentRow.typeid, name: currentRow.typename, description: currentRow.typedescription },
                 additionalNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
-                writer: { id: currentRow.writerid, email: currentRow.writeremail },
+                writer: { id: currentRow.writerid, email: currentRow.writeremail, active: currentRow.writeractive },
                 ingredients: []
               });
             }
@@ -57,7 +57,7 @@ export class DrinkRepository {
   findById(id) {
     return usingConnect(this.connectionString, client =>
       Promise.join(
-        client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`),
+        client.queryAsync(sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinktypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.id=${id}`),
         client.queryAsync(sql`SELECT name FROM additionalDrinkNames WHERE drink=${id}`),
         (result, additionalNames) => result.rows.length === 0
           ? undefined
@@ -67,7 +67,7 @@ export class DrinkRepository {
               preparation: result.rows[0].preparation,
               type: { id: result.rows[0].typeid, name: result.rows[0].typename, description: result.rows[0].typedescription },
               additionalNames: additionalNames.rows.map(drinkName => drinkName.name),
-              writer: { id: result.rows[0].writerid, email: result.rows[0].writeremail },
+              writer: { id: result.rows[0].writerid, email: result.rows[0].writeremail, active: result.rows[0].writeractive },
               ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
             })
         .catch(err => undefined));

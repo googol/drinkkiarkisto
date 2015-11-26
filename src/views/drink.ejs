@@ -25,7 +25,7 @@ function formatAmount(amount) {
   <% } %>
 </h1>
 <% if (locals.user && locals.user.isAdmin) { %>
-<em><%= locals.drink.writer.email %></em>
+<em><%= locals.drink.writer.email %><%= locals.drink.writer.active ? '' : ' (deleted)' %></em>
 <% } %>
 <% if (locals.drink.additionalNames.length > 0) { %>
 <small>Tunnetaan myös <%= locals.drink.additionalNames.length === 1 ? 'nimellä' : 'nimillä' %>: <%= locals.drink.additionalNames.join(', ') %></small>
