@@ -29,18 +29,26 @@ export class DrinkRepository {
   }
 
   getAll() {
-    return this.getMany('');
+    return this.getMany(selectAllDrinksSql, selectAllAdditionalDrinkNamesSql);
   }
 
   getAllAccepted() {
-    return this.getMany('drinks.accepted=\'true\'');
+    const selectDrinks = selectAllDrinksSql + ' WHERE drinks.accepted=\'true\'';
+    const selectAdditionalDrinkNames = selectAllAdditionalDrinkNamesSql + ' AND drinks.accepted=\'true\'';
+    return this.getMany(selectDrinks, selectAdditionalDrinkNames);
   }
 
-  getMany(extraFilter) {
+  getAllAcceptedOrWrittenByUser(userId) {
+    const selectDrinks = sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.accepted='true' OR drinks.writer=${userId}`;
+    const selectAdditionalDrinkNames = sql`SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink AND (drinks.accepted='true' OR drinks.writer=${userId})`;
+    return this.getMany(selectDrinks, selectAdditionalDrinkNames);
+  }
+
+  getMany(selectDrinks, selectAdditionalDrinkNames) {
     return usingConnect(this.connectionString, client =>
       Promise.join(
-        client.queryAsync(selectAllDrinksSql + (extraFilter && ' WHERE '+extraFilter || '')),
-        client.queryAsync(selectAllAdditionalDrinkNamesSql + (extraFilter && ' AND '+extraFilter || '')),
+        client.queryAsync(selectDrinks),
+        client.queryAsync(selectAdditionalDrinkNames),
         function(result, additionalDrinkNames) {
           const transformed = new Map();
           result.rows.forEach(function(currentRow) {

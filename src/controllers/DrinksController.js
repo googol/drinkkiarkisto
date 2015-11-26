@@ -22,7 +22,12 @@ export class DrinksController {
   }
 
   showList(req, res, next) {
-    const drinksPromise = (req.user && req.user.isAdmin) ? this.drinkRepo.getAll() : this.drinkRepo.getAllAccepted();
+    let drinksPromise;
+    if (req.user) {
+      drinksPromise = req.user.isAdmin ? this.drinkRepo.getAll() : this.drinkRepo.getAllAcceptedOrWrittenByUser(req.user.id);
+    } else {
+      drinksPromise = this.drinkRepo.getAllAccepted();
+    }
     drinksPromise
       .then(result => res.locals.drinks = result)
       .then(() => render(res, 'index'))
