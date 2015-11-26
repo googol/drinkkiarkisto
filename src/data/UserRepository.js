@@ -70,6 +70,7 @@ export class UserRepository {
   }
 
   deleteById(id) {
-    return usingConnect(this.connectionString, client => client.queryAsync(sql`DELETE FROM users WHERE id=${id}`));
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync(sql`UPDATE users SET active='false' WHERE id=${id}`));
   }
 }
