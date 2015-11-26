@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport'
 import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserRepository } from './data';
-import { DrinksController, ProfileController } from './controllers'
+import { DrinksController, IngredientsController, ProfileController } from './controllers'
 import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory, urlencodedParser, getDrinkFromRequestBody } from './middleware'
 
 function ifHasQueryParam(param, then, otherwise) {
@@ -18,6 +18,7 @@ export function configureRoutes(app, connectionString) {
 
   const drinksController = new DrinksController(drinkRepository, drinkTypeRepository, ingredientRepository);
   const profileController = new ProfileController(passport, userRepository);
+  const ingredientsController = new IngredientsController(ingredientRepository);
 
   const requireUserOrLogin = requireUserOrLoginFactory(profileController);
   const requireAdminOrLogin = requireAdminOrLoginFactory(profileController);
@@ -38,6 +39,9 @@ export function configureRoutes(app, connectionString) {
     .post(requireAdmin, urlencodedParser, (req, res, next) => drinksController.acceptSingle(req, res, next))
     .put(requireAdmin, urlencodedParser, getDrinkFromRequestBody, (req, res, next) => drinksController.updateSingle(req, res, next))
     .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
+
+  app.route('/ingredients')
+    .get(requireAdmin, (req, res, next) => ingredientsController.showList(req, res, next));
 
   app.route('/register')
     .get((req, res, next) => profileController.showRegistrationPage(req, res, next))

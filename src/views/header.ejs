@@ -23,6 +23,11 @@
         <li><a href="/login">Kirjaudu sisään</a></li>
         <% } %>
       </ul>
+      <% if (locals.user && locals.user.isAdmin) { %>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/ingredients">Ainesosat</a></li>
+      </ul>
+      <% } %>
     </div>
   </div>
 </nav>
