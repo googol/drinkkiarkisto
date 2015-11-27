@@ -1,9 +1,6 @@
 import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
 import Promise from 'bluebird'
 
-const selectAllDrinksSql = 'SELECT drinks.id, drinks.primaryName, drinks.preparation, drinks.accepted, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id';
-const selectAllAdditionalDrinkNamesSql = 'SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink';
-
 function getIngredientAmount(dbRow) {
   return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };
 }
@@ -28,23 +25,109 @@ export class DrinkRepository {
     this.connectionString = connectionString;
   }
 
-  getAll() {
-    return this.getMany(selectAllDrinksSql, selectAllAdditionalDrinkNamesSql);
+  getAll(query) {
+    query = '%'+query+'%';
+    const idsQuery = sql`SELECT DISTINCT drinks.id
+    FROM drinks
+    LEFT JOIN drinkIngredients
+      ON drinks.id=drinkIngredients.drink
+    LEFT JOIN ingredients
+      ON drinkIngredients.ingredient=ingredients.id
+    LEFT JOIN additionalDrinkNames
+      ON drinks.id=additionalDrinkNames.drink
+    WHERE
+      drinks.primaryName ILIKE ${query}
+      OR additionalDrinkNames.name ILIKE ${query}
+      OR ingredients.name ILIKE ${query}`;
+    return this.getMany(idsQuery);
   }
 
-  getAllAccepted() {
-    const selectDrinks = selectAllDrinksSql + ' WHERE drinks.accepted=\'true\'';
-    const selectAdditionalDrinkNames = selectAllAdditionalDrinkNamesSql + ' AND drinks.accepted=\'true\'';
-    return this.getMany(selectDrinks, selectAdditionalDrinkNames);
+  getAllAccepted(query) {
+    query = '%'+query+'%';
+    const idsQuery = sql`SELECT DISTINCT drinks.id
+    FROM drinks
+    LEFT JOIN drinkIngredients
+      ON drinks.id=drinkIngredients.drink
+    LEFT JOIN ingredients
+      ON drinkIngredients.ingredient=ingredients.id
+    LEFT JOIN additionalDrinkNames
+      ON drinks.id=additionalDrinkNames.drink
+    WHERE
+      drinks.accepted='true'
+      AND (
+        drinks.primaryName ILIKE ${query}
+        OR additionalDrinkNames.name ILIKE ${query}
+        OR ingredients.name ILIKE ${query}
+      )`;
+    return this.getMany(idsQuery);
   }
 
-  getAllAcceptedOrWrittenByUser(userId) {
-    const selectDrinks = sql`SELECT drinks.id, drinks.primaryName, drinks.preparation, drinks.accepted, ingredients.id as ingredientid, ingredients.name as ingredientname, drinkIngredients.amount, drinkTypes.id as typeid, drinkTypes.name as typename, drinkTypes.description as typedescription, users.id as writerid, users.email as writeremail, users.active as writeractive FROM drinks LEFT JOIN users ON drinks.writer = users.id LEFT JOIN drinkTypes ON drinkTypes.id = drinks.type LEFT JOIN drinkIngredients ON drinkIngredients.drink = drinks.id LEFT JOIN ingredients ON drinkIngredients.ingredient = ingredients.id WHERE drinks.accepted='true' OR drinks.writer=${userId}`;
-    const selectAdditionalDrinkNames = sql`SELECT drinks.id, additionalDrinkNames.name FROM drinks, additionalDrinkNames WHERE drinks.id = additionalDrinkNames.drink AND (drinks.accepted='true' OR drinks.writer=${userId})`;
-    return this.getMany(selectDrinks, selectAdditionalDrinkNames);
+  getAllAcceptedOrWrittenByUser(query, userId) {
+    query = '%'+query+'%';
+    const idsQuery = sql`SELECT DISTINCT drinks.id
+    FROM drinks
+    LEFT JOIN drinkIngredients
+      ON drinks.id=drinkIngredients.drink
+    LEFT JOIN ingredients
+      ON drinkIngredients.ingredient=ingredients.id
+    LEFT JOIN additionalDrinkNames
+      ON drinks.id=additionalDrinkNames.drink
+    WHERE
+      (
+        drinks.accepted='true'
+        OR drinks.writer=${userId}
+      ) AND (
+        drinks.primaryName ILIKE ${query}
+        OR additionalDrinkNames.name ILIKE ${query}
+        OR ingredients.name ILIKE ${query}
+      )`;
+    return this.getMany(idsQuery);
   }
 
-  getMany(selectDrinks, selectAdditionalDrinkNames) {
+  getMany(idsQuery) {
+    const selectDrinks = {
+      text:
+    `SELECT
+      drinks.id,
+      drinks.primaryName,
+      drinks.preparation,
+      drinks.accepted,
+      ingredients.id as ingredientid,
+      ingredients.name as ingredientname,
+      drinkIngredients.amount,
+      drinkTypes.id as typeid,
+      drinkTypes.name as typename,
+      drinkTypes.description as typedescription,
+      users.id as writerid,
+      users.email as writeremail,
+      users.active as writeractive
+    FROM drinks
+    LEFT JOIN users
+      ON drinks.writer = users.id
+    LEFT JOIN drinkTypes
+      ON drinkTypes.id = drinks.type
+    LEFT JOIN drinkIngredients
+      ON drinkIngredients.drink = drinks.id
+    LEFT JOIN ingredients
+      ON drinkIngredients.ingredient = ingredients.id
+    WHERE
+      drinks.id IN (${idsQuery.text})`,
+      values: idsQuery.values
+    };
+    const selectAdditionalDrinkNames = {
+      text:
+    `SELECT
+      drinks.id,
+      additionalDrinkNames.name
+    FROM
+      drinks,
+      additionalDrinkNames
+    WHERE
+      drinks.id = additionalDrinkNames.drink
+      AND drinks.id IN (${idsQuery.text})`,
+      values: idsQuery.values
+    };
+
     return usingConnect(this.connectionString, client =>
       Promise.join(
         client.queryAsync(selectDrinks),

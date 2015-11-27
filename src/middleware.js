@@ -57,6 +57,7 @@ function setCommonLocals(req, res, next) {
   res.locals.user = req.user;
   res.locals.errors = req.flash('error');
   res.locals.successes = req.flash('success');
+  res.locals.query = req.query.q || '';
   next();
 }
 

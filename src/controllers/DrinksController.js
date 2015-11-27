@@ -23,10 +23,11 @@ export class DrinksController {
 
   showList(req, res, next) {
     let drinksPromise;
+    const query = res.locals.query;
     if (req.user) {
-      drinksPromise = req.user.isAdmin ? this.drinkRepo.getAll() : this.drinkRepo.getAllAcceptedOrWrittenByUser(req.user.id);
+      drinksPromise = req.user.isAdmin ? this.drinkRepo.getAll(query) : this.drinkRepo.getAllAcceptedOrWrittenByUser(query, req.user.id);
     } else {
-      drinksPromise = this.drinkRepo.getAllAccepted();
+      drinksPromise = this.drinkRepo.getAllAccepted(query);
     }
     drinksPromise
       .then(result => res.locals.drinks = result)
