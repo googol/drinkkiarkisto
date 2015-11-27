@@ -6,7 +6,14 @@
       <table class="table table-striped">
         <tr><th colspan="2">Nimi</th></tr>
         <% locals.ingredients.forEach(function(ingredient) { %>
-        <tr><td colspan="2"><%= ingredient.name %></td></tr>
+        <tr>
+          <td><%= ingredient.name %></td>
+          <td>
+            <% if (!ingredient.used) { %>
+            <button type="submit" class="btn btn-danger btn-block" formaction="/ingredients/<%= ingredient.id %>/?_method=delete" formmethod="post">Poista</button>
+            <% } %>
+          </td>
+        </tr>
         <% }); %>
         <tr>
           <td>
