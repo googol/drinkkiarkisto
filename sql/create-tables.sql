@@ -9,13 +9,11 @@ BEGIN;
 
   CREATE TABLE drinktypes (
     id serial NOT NULL PRIMARY KEY,
-    name text NOT NULL,
-    description text NOT NULL);
+    name text NOT NULL);
 
   CREATE TABLE ingredients (
     id serial NOT NULL PRIMARY KEY,
-    name text NOT NULL,
-    abv integer NOT NULL);
+    name text NOT NULL);
 
   CREATE TABLE drinks (
     id serial NOT NULL PRIMARY KEY,
