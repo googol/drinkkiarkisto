@@ -1,6 +1,6 @@
 {
   "name": "drinkkiarkisto",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Tietokantasovellus-harjoitustyö",
   "main": "bootstrap.js",
   "licence": "MIT",
