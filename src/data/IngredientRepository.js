@@ -1,4 +1,4 @@
-import { connect, sql } from './pg-helpers'
+import { connect, usingConnect, sql } from './pg-helpers'
 import Promise from 'bluebird'
 
 export class IngredientRepository {
@@ -22,5 +22,11 @@ export class IngredientRepository {
           return result.rows;
         });
     });
+  }
+
+  addIngredient(name) {
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync(sql`INSERT INTO ingredients (name, abv) VALUES (${name}, 0) RETURNING id`)
+        .then(result => result.rows[0].id));
   }
 }

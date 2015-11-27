@@ -41,7 +41,11 @@ export function configureRoutes(app, connectionString) {
     .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
 
   app.route('/ingredients')
-    .get(requireAdmin, (req, res, next) => ingredientsController.showList(req, res, next));
+    .get(requireAdmin, (req, res, next) => ingredientsController.showList(req, res, next))
+    .post(requireAdmin, urlencodedParser, (req, res, next) => ingredientsController.addNew(req, res, next));
+
+  app.route('/ingredients/:ingredientId')
+    .get(requireAdmin, (req, res, next) => res.redirect('/ingredients'));
 
   app.route('/register')
     .get((req, res, next) => profileController.showRegistrationPage(req, res, next))

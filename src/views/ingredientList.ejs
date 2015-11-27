@@ -1,13 +1,23 @@
 <% include head %>
 <h1>Ainesosat</h1>
 <div class="row">
-  <div class="col-xs-4">
-    <table class="table table-striped">
-      <tr><th>Nimi</th></tr>
-      <% locals.ingredients.forEach(function(ingredient) { %>
-      <tr><td><%= ingredient.name %></td></tr>
-      <% }); %>
-    </table>
+  <div class="col-xs-5">
+    <form>
+      <table class="table table-striped">
+        <tr><th colspan="2">Nimi</th></tr>
+        <% locals.ingredients.forEach(function(ingredient) { %>
+        <tr><td colspan="2"><%= ingredient.name %></td></tr>
+        <% }); %>
+        <tr>
+          <td>
+            <input type="text" class="form-control" id="ingredientName" name="ingredientName" />
+          </td>
+          <td>
+            <button type="submit" class="btn btn-primary btn-block" formaction="/ingredients" formmethod="post">Lisää uusi ainesosa</button>
+          </td>
+        </tr>
+      </table>
+    </form>
   </div>
 </div>
 <% include foot %>
