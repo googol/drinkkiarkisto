@@ -38,6 +38,12 @@ export class UserRepository {
     this.connectionString = connectionString;
   }
 
+  getAll() {
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync('SELECT * FROM users')
+        .then(result => result.rows.map(user => new User(user))));
+  }
+
   findById(id) {
     return usingConnect(this.connectionString, client =>
       client.queryAsync(sql`SELECT * FROM users WHERE id=${id}`)
@@ -72,5 +78,10 @@ export class UserRepository {
   deleteById(id) {
     return usingConnect(this.connectionString, client =>
       client.queryAsync(sql`UPDATE users SET active='false' WHERE id=${id}`));
+  }
+
+  setAdminStatusById(id, newIsAdmin) {
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync(sql`UPDATE users SET admin=${newIsAdmin} WHERE id=${id}`));
   }
 }
