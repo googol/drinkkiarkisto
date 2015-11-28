@@ -30,13 +30,11 @@ export class DrinkTypeRepository {
     const query = sql`INSERT
     INTO drinkTypes
       (
-        name,
-        description
+        name
       )
     VALUES
       (
-        ${name},
-        ''
+        ${name}
       )
     RETURNING id`;
 

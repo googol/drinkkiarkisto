@@ -49,13 +49,11 @@ export class IngredientRepository {
     const query = sql`INSERT
     INTO ingredients
       (
-        name,
-        abv
+        name
       )
     VALUES
       (
-        ${name},
-        0
+        ${name}
       )
     RETURNING id`;
 
