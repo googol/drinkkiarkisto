@@ -16,7 +16,7 @@
 \section{Johdanto}
 Tämän tietokantasovellus-harjoitustyön aiheena on drinkkiarkisto. Drinkkiarkiston tarkoitus on olla jokaisen kotibaarimestarin apuväline jolla löytää uudenlaisia juomia kokeiltavaksi, sekä palauttaa tuttujen drinkkien reseptit mieleen. Arkistosta kuka tahansa pystyy etsimään juomia esimerkiksi nimen, juomatyypin tai ainesosien perusteella. Kirjautuneet käyttäjät voivat luoda drinkkireseptejä ehdotuksiksi, jotka eivät näy suurelle yleisölle ennen kuin ylläpitäjä on ne hyväksynyt.
 
-Projekti toteutetaan javascriptillä käyttäen alustana nodejs:ää. Tietokantana toimii PostgreSQL. Web-frameworkina toimii express. Dokumentaatio kirjoitetaan latexilla. Sovellus ei vaadi käyttäjän selaimelta javascript-tukea. Sovelluksen kehittämisen helpottamiseksi projektille on vagrant-konfiguraatio. Vagrant luo virtuaalikoneen joka vastaa mahdollisimman paljon tuotantoympäristöä ja sisältää kaiken tarpeellisen sovelluksen ajamiseen. 
+Projekti toteutetaan javascriptillä käyttäen alustana nodejs:ää. Tietokantana toimii PostgreSQL. Web-frameworkina toimii express. Dokumentaatio kirjoitetaan latexilla. Sovellus ei vaadi käyttäjän selaimelta javascript-tukea, joskin sitä käytetään jonkin verran parantamaan käyttökokemusta jos tuki löytyy. Sovelluksen kehittämisen helpottamiseksi projektille on vagrant-konfiguraatio. Vagrant luo virtuaalikoneen joka vastaa mahdollisimman paljon tuotantoympäristöä ja sisältää kaiken tarpeellisen sovelluksen ajamiseen. 
 
 Valmis ohjelmisto ajetaan herokussa. Jatkuvan integroinnin palvelu Travis kääntää uuden version ohjelmistosta aina kun githubiin pushataan uusi versio lähdekoodista, ja siirtää sen suoraan herokuun.
 \pagebreak
@@ -93,7 +93,9 @@ Javascriptiä ei selaimen päässä käytetä tässä vaiheessa ollenkaan.
 \includegraphics[width=\textwidth, height=15cm, keepaspectratio]{komponenttikaavio}
 
 \section{Asennustiedot}
-TBD\ldots{}
+Sovellus on yksinkertaisinta asentaa Herokuun. Tällöin ei tarvita mitään ylimääräistä konfiguraatiota. Luo Herokuun uusi app, lisää siihen posgres-lisäosa, ja deployaa git pushilla ohjelmisto siihen. Tämän jälkeen aja komento \texttt{heroku run -- npm run sql sql/create-tables.sql} joka lisää Herokun tietokantaan tarvittavat taulut, ja jos haluat testidatan aja \texttt{heroku run -- npm run sql sql/add-test-data.sql}.
+
+Muualle asentaessa on asennettava node 5.x ja ympäristömuuttujaan \texttt{DATABASE\_URL} asetettava postgresin yhdistysosoite, ja ympäristömuuttujaan \texttt{PORT} tcp-portin numero jota sovelluksen halutaan kuuntelevan. Kopioi sovelluksen tiedostot johonkin sopivaan kansioon, aja sen sisällä komento \texttt{npm install} joka asentaa ohjelmiston riippuvuudet. Tämän jälkeen voit lisätä tietokantaan tarvittavat taulut komennolla \texttt{npm run sql sql/create-tables.sql} ja jos haluat voit lisätä testidatan tietokantaan komennolla \texttt{npm run sql sql/add-test-data.sql}. Komento \texttt{npm start} käynnistää serverin jonka jälkeen se on tavoitettaissa ympäristömuuttujassa määritellyn portin kautta.
 
 \section{Käynnistys- ja käyttöohje}
 Ohjelmiston demoinstanssi on osoitteessa \url{https://peaceful-scrubland-8625.herokuapp.com/}.
