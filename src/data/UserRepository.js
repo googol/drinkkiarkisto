@@ -39,49 +39,93 @@ export class UserRepository {
   }
 
   getAll() {
+    const query = `SELECT
+      *
+    FROM users`;
     return usingConnect(this.connectionString, client =>
-      client.queryAsync('SELECT * FROM users')
+      client.queryAsync(query)
         .then(result => result.rows.map(user => new User(user))));
   }
 
   findById(id) {
+    const query = sql`SELECT
+      *
+    FROM users
+    WHERE id=${id}`;
     return usingConnect(this.connectionString, client =>
-      client.queryAsync(sql`SELECT * FROM users WHERE id=${id}`)
+      client.queryAsync(query)
         .then(result => result.rows.length === 0
           ? undefined
           : new User(result.rows[0])));
   }
 
   findByEmail(email) {
+    const query = sql`SELECT
+      *
+    FROM users
+    WHERE email=${email}`;
     return usingConnect(this.connectionString, client =>
-      client.queryAsync(sql`SELECT * FROM users WHERE email=${email}`)
+      client.queryAsync(query)
         .then(result => result.rows.length === 0
           ? undefined
           : new User(result.rows[0])));
   }
 
   updatePasswordById(id, password) {
+    const query = sql`UPDATE
+      users
+    SET
+      passwordHash=${passwordHash},
+      salt=${salt}
+    WHERE id=${id}`;
     return generatePasswordHashAndSalt(password)
       .spread((passwordHash, salt) => usingConnect(this.connectionString, client =>
-        client.queryAsync(sql`UPDATE users SET passwordHash=${passwordHash}, salt=${salt} WHERE id=${id}`)));
+        client.queryAsync(query)));
   }
 
   addUser(user) {
     const email = user.email;
     const isAdmin = user.isAdmin || false;
+    const query = sql`INSERT
+    INTO users
+      (
+        email,
+        passwordHash,
+        salt,
+        admin
+      )
+    VALUES
+      (
+        ${email},
+        ${passwordHash},
+        ${salt},
+        ${isAdmin}
+      )`;
 
     return generatePasswordHashAndSalt(user.password)
       .spread((passwordHash, salt) => usingConnect(this.connectionString, client =>
-        client.queryAsync(sql`INSERT INTO users (email, passwordHash, salt, admin) VALUES (${email}, ${passwordHash}, ${salt}, ${isAdmin})`)));
+        client.queryAsync(query)));
   }
 
   deleteById(id) {
+    const query = sql`UPDATE
+      users
+    SET
+      active='false'
+    WHERE id=${id}`;
+
     return usingConnect(this.connectionString, client =>
-      client.queryAsync(sql`UPDATE users SET active='false' WHERE id=${id}`));
+      client.queryAsync(query));
   }
 
   setAdminStatusById(id, newIsAdmin) {
+    const query = sql`UPDATE
+      users
+    SET
+      admin=${newIsAdmin}
+    WHERE id=${id}`;
+
     return usingConnect(this.connectionString, client =>
-      client.queryAsync(sql`UPDATE users SET admin=${newIsAdmin} WHERE id=${id}`));
+      client.queryAsync(query));
   }
 }
