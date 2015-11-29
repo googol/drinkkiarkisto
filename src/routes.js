@@ -26,61 +26,61 @@ export function configureRoutes(app, connectionString) {
   const requireAdminOrLogin = requireAdminOrLoginFactory(profileController);
 
   app.route('/')
-    .get((req, res, next) => drinksController.showList(req, res, next));
+    .get(::drinksController.showList);
 
   app.route('/drinks')
     .get(ifHasQueryParam('new',
       (req, res, next) => requireUserOrLogin(req, res, () => drinksController.showNewEditor(req, res, next)),
       (req, res, next) => res.redirect('/')))
-    .post(requireUser, urlencodedParser, getDrinkFromRequestBody, (req, res, next) => drinksController.addNew(req, res, next));
+    .post(requireUser, urlencodedParser, getDrinkFromRequestBody, ::drinksController.addNew);
 
   app.route('/drinks/:drinkId')
     .get(ifHasQueryParam('edit',
       (req, res, next) => requireAdminOrLogin(req, res, () => drinksController.showSingleEditor(req, res, next)),
-      (req, res, next) => drinksController.showSingle(req, res, next)))
-    .post(requireAdmin, urlencodedParser, (req, res, next) => drinksController.acceptSingle(req, res, next))
-    .put(requireAdmin, urlencodedParser, getDrinkFromRequestBody, (req, res, next) => drinksController.updateSingle(req, res, next))
-    .delete(requireAdmin, (req, res, next) => drinksController.deleteSingle(req, res, next));
+      ::drinksController.showSingle))
+    .post(requireAdmin, urlencodedParser, ::drinksController.acceptSingle)
+    .put(requireAdmin, urlencodedParser, getDrinkFromRequestBody, ::drinksController.updateSingle)
+    .delete(requireAdmin, ::drinksController.deleteSingle);
 
   app.route('/ingredients')
-    .get(requireAdmin, (req, res, next) => ingredientsController.showList(req, res, next))
-    .post(requireAdmin, urlencodedParser, (req, res, next) => ingredientsController.addNew(req, res, next));
+    .get(requireAdmin, ::ingredientsController.showList)
+    .post(requireAdmin, urlencodedParser, ::ingredientsController.addNew);
 
   app.route('/ingredients/:ingredientId')
     .get(requireAdmin, (req, res, next) => res.redirect('/ingredients'))
-    .delete(requireAdmin, (req, res, next) => ingredientsController.deleteSingle(req, res, next));
+    .delete(requireAdmin, ::ingredientsController.deleteSingle);
 
   app.route('/drinktypes')
-    .get(requireAdmin, (req, res, next) => drinkTypesController.showList(req, res, next))
-    .post(requireAdmin, urlencodedParser, (req, res, next) => drinkTypesController.addNew(req, res, next));
+    .get(requireAdmin, ::drinkTypesController.showList)
+    .post(requireAdmin, urlencodedParser, ::drinkTypesController.addNew);
 
   app.route('/drinktypes/:drinkTypeId')
     .get(requireAdmin, (req, res, next) => res.redirect('/drinktypes'))
-    .delete(requireAdmin, (req, res, next) => drinkTypesController.deleteSingle(req, res, next));
+    .delete(requireAdmin, ::drinkTypesController.deleteSingle);
 
   app.route('/users')
-    .get(requireAdmin, (req, res, next) => usersController.showList(req, res, next));
+    .get(requireAdmin, ::usersController.showList);
 
   app.route('/users/:userId')
     .get(requireAdmin, (req, res, next) => res.redirect('/users'))
-    .post(requireAdmin, urlencodedParser, (req, res, next) => usersController.changeAdminStatus(req, res, next))
-    .delete(requireAdmin, (req, res, next) => usersController.deleteSingle(req, res, next));
+    .post(requireAdmin, urlencodedParser, ::usersController.changeAdminStatus)
+    .delete(requireAdmin, ::usersController.deleteSingle);
 
   app.route('/register')
-    .get((req, res, next) => profileController.showRegistrationPage(req, res, next))
-    .post(urlencodedParser, (req, res, next) => profileController.registerUser(req, res, next));
+    .get(::profileController.showRegistrationPage)
+    .post(urlencodedParser, ::profileController.registerUser);
 
   app.route('/login')
-    .get((req, res, next) => profileController.showLoginPage(req, res, next))
-    .post(urlencodedParser, (req, res, next) => profileController.login(req, res, next));
+    .get(::profileController.showLoginPage)
+    .post(urlencodedParser, ::profileController.login);
 
   app.route('/logout')
-    .post((req, res, next) => profileController.logout(req, res, next));
+    .post(::profileController.logout);
 
   app.route('/profile')
-    .get(requireUserOrLogin, (req, res, next) => profileController.showProfilePage(req, res, next))
-    .post(requireUser, urlencodedParser, (req, res, next) => profileController.updatePassword(req, res, next))
-    .delete(requireUser, (req, res, next) => profileController.deleteProfile(req, res, next));
+    .get(requireUserOrLogin, ::profileController.showProfilePage)
+    .post(requireUser, urlencodedParser, ::profileController.updatePassword)
+    .delete(requireUser, ::profileController.deleteProfile);
 
   app.use('/', express.static(__dirname + '/../public'));
 }
