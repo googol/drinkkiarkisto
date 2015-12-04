@@ -7,19 +7,18 @@ import makeExternalLinkDriver from './externalLinkDriver';
 function main({ DOM }) {
   const externalLinkClick$ = DOM.select('a[rel=external]').events('click');
 
-  const user = {
+  const user$ = Observable.just({
     isAdmin: true,
     email: 'admin@example.com',
     id: 1,
-  };
-  const locals = {
-    user,
-    query: '',
-  };
-  const view = Observable.just(locals).concat(Observable.never()).map(locals => renderHeader(locals.user, locals.query));
+  });
+  const query$ = Observable.just('');
+  const model$ = Observable.combineLatest(user$, query$, (user, query) => ({ user, query }));
+
+  const view$ = model$.map(locals => renderHeader(locals.user, locals.query));
 
   return {
-    DOM: view,
+    DOM: view$,
     externalLink: externalLinkClick$,
   };
 }
