@@ -1,5 +1,3 @@
-import { ValidationError } from './ValidationError'
-
 export function configureValidationErrorHandling(app) {
   function handleValidationError(err, req, res, next) {
     if (err.name !== 'ValidationError') { return next(err); }

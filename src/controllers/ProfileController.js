@@ -1,6 +1,6 @@
-import Promise from 'bluebird'
-import { render, created } from './helpers'
-import { ValidationError } from '../validation'
+import Promise from 'bluebird';
+import { render, created } from './helpers';
+import { ValidationError } from '../validation';
 
 export class ProfileController {
   constructor(passport, userRepo) {
@@ -19,7 +19,7 @@ export class ProfileController {
     const passwordConfirm = req.body.passwordConfirm;
 
     Promise.try(() => {
-      let errorMessages = {};
+      const errorMessages = {};
       if (!email) {
         errorMessages.email = 'Sähköpostiosoite vaaditaan';
       }

@@ -1,6 +1,6 @@
-import Promise from 'bluebird'
-import { render, setLocals, created, updated, deleted } from './helpers'
-import { DrinkValidator } from '../validation'
+import Promise from 'bluebird';
+import { render, setLocals, created, updated, deleted } from './helpers';
+import { DrinkValidator } from '../validation';
 
 function findSingleDrinkOr404(drinkRepo, id) {
   return drinkRepo.findById(id).then(drink => {
@@ -69,7 +69,7 @@ export class DrinksController {
     const drink = res.locals.drink;
     const validator = new DrinkValidator();
 
-    validator.validate(drink, drinkUrl + '?edit')
+    validator.validate(drink, `${drinkUrl}?edit`)
       .then(() => this.drinkRepo.updateById(id, drink))
       .then(() => updated(res, drinkUrl))
       .catch(next);

@@ -1,4 +1,4 @@
-import { render, setLocals, created, deleted } from './helpers'
+import { render, setLocals, created, deleted } from './helpers';
 
 export class DrinkTypesController {
   constructor(drinkTypeRepo) {

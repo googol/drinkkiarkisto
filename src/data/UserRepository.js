@@ -1,7 +1,7 @@
-import { usingConnect, sql } from './pg-helpers'
-import Promise from 'bluebird'
-import crypto from 'crypto'
-import scmp from 'scmp'
+import { usingConnect, sql } from './pg-helpers';
+import Promise from 'bluebird';
+import crypto from 'crypto';
+import scmp from 'scmp';
 
 const pbkdf2 = Promise.promisify(crypto.pbkdf2, crypto);
 const randomBytes = Promise.promisify(crypto.randomBytes, crypto);
@@ -72,39 +72,44 @@ export class UserRepository {
   }
 
   updatePasswordById(id, password) {
-    const query = sql`UPDATE
-      users
-    SET
-      passwordHash=${passwordHash},
-      salt=${salt}
-    WHERE id=${id}`;
+    function getQuery(passwordHash, salt) {
+      return sql`UPDATE
+        users
+      SET
+        passwordHash=${passwordHash},
+        salt=${salt}
+      WHERE id=${id}`;
+    }
+
     return generatePasswordHashAndSalt(password)
       .spread((passwordHash, salt) => usingConnect(this.connectionString, client =>
-        client.queryAsync(query)));
+        client.queryAsync(getQuery(passwordHash, salt))));
   }
 
   addUser(user) {
     const email = user.email;
-    const isAdmin = user.isAdmin || false;
-    const query = sql`INSERT
-    INTO users
-      (
-        email,
-        passwordHash,
-        salt,
-        admin
-      )
-    VALUES
-      (
-        ${email},
-        ${passwordHash},
-        ${salt},
-        ${isAdmin}
-      )`;
+    const isAdmin = user.isAdmin || false;
+    function getQuery(passwordHash, salt) {
+      return sql`INSERT
+      INTO users
+        (
+          email,
+          passwordHash,
+          salt,
+          admin
+        )
+      VALUES
+        (
+          ${email},
+          ${passwordHash},
+          ${salt},
+          ${isAdmin}
+        )`;
+    }
 
     return generatePasswordHashAndSalt(user.password)
       .spread((passwordHash, salt) => usingConnect(this.connectionString, client =>
-        client.queryAsync(query)));
+        client.queryAsync(getQuery(passwordHash, salt))));
   }
 
   deleteById(id) {

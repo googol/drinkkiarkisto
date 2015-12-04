@@ -1,5 +1,4 @@
-import { connect, usingConnect, sql } from './pg-helpers'
-import Promise from 'bluebird'
+import { usingConnect, sql } from './pg-helpers';
 
 function mapIngredient(ingredient) {
   return { id: ingredient.id, name: ingredient.name, used: ingredient.numberofusages > 0 };
@@ -37,12 +36,9 @@ export class IngredientRepository {
       ON
         ingredients.id = drinkIngredients.ingredient
         AND drinkIngredients.drink = ${drinkId}`;
-    return Promise.using(connect(this.connectionString), function(client) {
-      return client.queryAsync(query)
-        .then(function(result) {
-          return result.rows;
-        });
-    });
+    return usingConnect(this.connectionString, client =>
+      client.queryAsync(query)
+        .then(result => result.rows));
   }
 
   addIngredient(name) {

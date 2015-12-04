@@ -1,5 +1,5 @@
-import pg from 'pg'
-import Promise from 'bluebird'
+import pg from 'pg';
+import Promise from 'bluebird';
 
 Promise.promisifyAll(pg, { filter: function(methodName) { return methodName === 'connect'; }, multiArgs: true });
 Promise.promisifyAll(pg);
@@ -9,13 +9,13 @@ Promise.promisifyAll(pg);
  * Connection is taken from the standard pg connection pool.
  */
 export function connect(connectionString) {
-  var close;
+  let close;
   return pg.connectAsync(connectionString)
-    .spread(function(client, done) {
+    .spread((client, done) => {
       close = done;
       return client;
     })
-    .disposer(function() {
+    .disposer(() => {
       if (close) close();
     });
 }
@@ -45,11 +45,11 @@ export function rollbackTransaction(client) {
  * The handler function is executed inside a transaction.
  */
 export function usingConnectTransaction(connectionString, handler) {
-  return usingConnect(connectionString, function(client) {
-    return beginTransaction(client)
+  return usingConnect(connectionString, client =>
+    beginTransaction(client)
       .then(handler)
-      .then(res => commitTransaction(client).return(res), err => rollbackTransaction(client).throw(err));
-  });
+      .then(res => commitTransaction(client).return(res), err => rollbackTransaction(client).throw(err))
+  );
 }
 
 /**
@@ -59,7 +59,7 @@ export function usingConnectTransaction(connectionString, handler) {
  */
 export function sql(parts, ...values) {
   return {
-    text: parts.reduce((previous, current, i) => previous + '$' + i + current),
-    values
+    text: parts.reduce((previous, current, i) => `${previous}$${i}${current}`),
+    values,
   };
 }

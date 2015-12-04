@@ -1,5 +1,5 @@
-import { usingConnect, usingConnectTransaction, sql } from './pg-helpers'
-import Promise from 'bluebird'
+import { usingConnect, usingConnectTransaction, sql } from './pg-helpers';
+import Promise from 'bluebird';
 
 function getIngredientAmount(dbRow) {
   return { id: dbRow.ingredientid, name: dbRow.ingredientname, amount: dbRow.amount };
@@ -28,37 +28,41 @@ function getInsertDrinkSql(drink) {
 }
 
 function insertIngredientsForDrink(client, drinkId, ingredients) {
-  const query = sql`INSERT
-  INTO drinkIngredients
-    (
-      drink,
-      ingredient,
-      amount
-    )
-  VALUES
-    (
-      ${drinkId},
-      ${ingredient.id},
-      ${ingredient.amount}
-    )`;
-  return Promise.all(ingredients.map(ingredient =>
-    client.queryAsync(query)));
+  function getQuery(ingredient) {
+    return sql`INSERT
+      INTO drinkIngredients
+        (
+          drink,
+          ingredient,
+          amount
+        )
+      VALUES
+        (
+          ${drinkId},
+          ${ingredient.id},
+          ${ingredient.amount}
+        )`;
+  }
+
+  return Promise.all(ingredients.map(ingredient => client.queryAsync(getQuery(ingredient))));
 }
 
 function insertAdditionalNamesForDrink(client, drinkId, additionalNames) {
-  const query = sql`INSERT
-  INTO additionalDrinkNames
-    (
-      drink,
-      name
-    )
-  VALUES
-    (
-      ${drinkId},
-      ${additionalName}
-    )`;
-  return Promise.all(additionalNames.map(additionalName =>
-    client.queryAsync(query)));
+  function getQuery(additionalName) {
+    return sql`INSERT
+      INTO additionalDrinkNames
+        (
+          drink,
+          name
+        )
+      VALUES
+        (
+          ${drinkId},
+          ${additionalName}
+        )`;
+  }
+
+  return Promise.all(additionalNames.map(additionalName => client.queryAsync(getQuery(additionalName))));
 }
 
 export class DrinkRepository {
@@ -67,7 +71,7 @@ export class DrinkRepository {
   }
 
   getAll(query) {
-    query = '%'+query+'%';
+    query = `%${query}%`;
     const idsQuery = sql`SELECT DISTINCT drinks.id
     FROM drinks
     LEFT JOIN drinkIngredients
@@ -84,7 +88,7 @@ export class DrinkRepository {
   }
 
   getAllAccepted(query) {
-    query = '%'+query+'%';
+    query = `%${query}%`;
     const idsQuery = sql`SELECT DISTINCT drinks.id
     FROM drinks
     LEFT JOIN drinkIngredients
@@ -104,7 +108,7 @@ export class DrinkRepository {
   }
 
   getAllAcceptedOrWrittenByUser(query, userId) {
-    query = '%'+query+'%';
+    query = `%${query}%`;
     const idsQuery = sql`SELECT DISTINCT drinks.id
     FROM drinks
     LEFT JOIN drinkIngredients
@@ -152,7 +156,7 @@ export class DrinkRepository {
       ON drinkIngredients.ingredient = ingredients.id
     WHERE
       drinks.id IN (${idsQuery.text})`,
-      values: idsQuery.values
+      values: idsQuery.values,
     };
     const selectAdditionalDrinkNames = {
       text:
@@ -165,16 +169,16 @@ export class DrinkRepository {
     WHERE
       drinks.id = additionalDrinkNames.drink
       AND drinks.id IN (${idsQuery.text})`,
-      values: idsQuery.values
+      values: idsQuery.values,
     };
 
     return usingConnect(this.connectionString, client =>
       Promise.join(
         client.queryAsync(selectDrinks),
         client.queryAsync(selectAdditionalDrinkNames),
-        function(result, additionalDrinkNames) {
+        (result, additionalDrinkNames) => {
           const transformed = new Map();
-          result.rows.forEach(function(currentRow) {
+          result.rows.forEach(currentRow => {
             if (!transformed.has(currentRow.id)) {
               transformed.set(currentRow.id, {
                 id: currentRow.id,
@@ -184,7 +188,7 @@ export class DrinkRepository {
                 additionalNames: additionalDrinkNames.rows.filter(drinkName => drinkName.id === currentRow.id).map(drinkName => drinkName.name),
                 writer: { id: currentRow.writerid, email: currentRow.writeremail, active: currentRow.writeractive },
                 accepted: currentRow.accepted,
-                ingredients: []
+                ingredients: [],
               });
             }
             const current = transformed.get(currentRow.id);
@@ -232,54 +236,52 @@ export class DrinkRepository {
         (result, additionalNames) => result.rows.length === 0
           ? undefined
           : {
-              id: result.rows[0].id,
-              primaryName: result.rows[0].primaryname,
-              preparation: result.rows[0].preparation,
-              type: { id: result.rows[0].typeid, name: result.rows[0].typename },
-              additionalNames: additionalNames.rows.map(drinkName => drinkName.name),
-              writer: { id: result.rows[0].writerid, email: result.rows[0].writeremail, active: result.rows[0].writeractive },
-              accepted: result.rows[0].accepted,
-              ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || []
-            })
-        .catch(err => undefined));
+            id: result.rows[0].id,
+            primaryName: result.rows[0].primaryname,
+            preparation: result.rows[0].preparation,
+            type: { id: result.rows[0].typeid, name: result.rows[0].typename },
+            additionalNames: additionalNames.rows.map(drinkName => drinkName.name),
+            writer: { id: result.rows[0].writerid, email: result.rows[0].writeremail, active: result.rows[0].writeractive },
+            accepted: result.rows[0].accepted,
+            ingredients: result.rows[0].ingredientid && result.rows.map(row => getIngredientAmount(row)) || [],
+          })
+        .catch(_ => undefined));
   }
 
   addDrink(drink) {
     if (!drink.primaryName) {
       return Promise.reject(new Error('The primary name of the drink is required.'));
-    } else if(!drink.preparation) {
+    } else if (!drink.preparation) {
       return Promise.reject(new Error('The preparation instruction for the drink is required.'));
     }
     const ingredients = drink.ingredients || [];
-    const additionalNames = drink.additionalNames || [];
+    const additionalNames = drink.additionalNames || [];
 
-    return usingConnectTransaction(this.connectionString, function(client) {
-      return client.queryAsync(getInsertDrinkSql(drink))
+    return usingConnectTransaction(this.connectionString, client =>
+      client.queryAsync(getInsertDrinkSql(drink))
         .then(createResult => createResult.rows[0].id)
         .then(drinkId => Promise.join(
           insertIngredientsForDrink(client, drinkId, ingredients),
           insertAdditionalNamesForDrink(client, drinkId, additionalNames),
-          () => drinkId));
-    });
+          () => drinkId))
+    );
   }
 
   deleteById(id) {
     const query = sql`DELETE
     FROM drinks
     WHERE id=${id}`;
-    return usingConnect(this.connectionString, function(client) {
-      return client.queryAsync(query);
-    });
+    return usingConnect(this.connectionString, client => client.queryAsync(query));
   }
 
   updateById(id, drink) {
     if (!drink.primaryName) {
       return Promise.reject(new Error('The primary name of the drink is required.'));
-    } else if(!drink.preparation) {
+    } else if (!drink.preparation) {
       return Promise.reject(new Error('The preparation instruction for the drink is required.'));
     }
-    const ingredients = drink.ingredients || [];
-    const additionalNames = drink.additionalNames || [];
+    const ingredients = drink.ingredients || [];
+    const additionalNames = drink.additionalNames || [];
 
     const updateQuery = sql`UPDATE
       drinks

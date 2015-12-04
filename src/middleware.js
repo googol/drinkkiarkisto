@@ -1,13 +1,12 @@
-import methodOverride from 'method-override'
-import session from 'express-session'
-import connectPgSimple from 'connect-pg-simple'
-import passport from 'passport'
-import flash from 'connect-flash'
-import pg from 'pg'
-import bodyparser from 'body-parser'
-import { Strategy as LocalStrategy } from 'passport-local'
-import { UserRepository } from './data'
-import { ValidationError } from './validation'
+import methodOverride from 'method-override';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
+import passport from 'passport';
+import flash from 'connect-flash';
+import pg from 'pg';
+import bodyparser from 'body-parser';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { UserRepository } from './data';
 
 export const urlencodedParser = bodyparser.urlencoded({ extended: false });
 
@@ -31,7 +30,7 @@ export function requireUserOrLoginFactory(profileController) {
   return (req, res, next) => {
     if (req.user) {
       next();
-    } else {
+    } else {
       req.flash('error', 'Pyytämäsi sivu vaatii sisäänkirjautumisen');
       req.session.returnTo = req.originalUrl;
       res.status(401);
@@ -57,7 +56,7 @@ function setCommonLocals(req, res, next) {
   res.locals.user = req.user;
   res.locals.errors = req.flash('error');
   res.locals.successes = req.flash('success');
-  res.locals.query = req.query.q || '';
+  res.locals.query = req.query.q || '';
   next();
 }
 
@@ -68,7 +67,7 @@ function removeDuplicates(input) {
 function getIngredientAmounts(body) {
   return Object.keys(body)
     .map(key => key.match(/ingredient-(\d+)-amount/))
-    .map(match => match && { id: match[1], amount: Number.parseInt(body[match[0]], 10) } || undefined)
+    .map(match => match && { id: match[1], amount: Number.parseInt(body[match[0]], 10) } || undefined)
     .filter(value => value && value.amount);
 }
 
@@ -91,7 +90,7 @@ export function getDrinkFromRequestBody(req, res, next) {
       ingredients: getIngredientAmounts(body),
       additionalNames: getAdditionalDrinkNames(body),
       writer: req.user,
-      type: { id: body.drinkType }
+      type: { id: body.drinkType },
     };
   } catch (e) {
     err = e;
@@ -107,16 +106,16 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
   const sessionConfiguration = {
     store: new PgSession({
       pg: pg,
-      conString: connectionString
+      conString: connectionString,
     }),
     secret: cookieSecret,
     resave: true,
-    saveUninitialized: false
+    saveUninitialized: false,
   };
-  const localStrategy = new LocalStrategy(function(email, password, done) {
+  const localStrategy = new LocalStrategy((email, password, done) =>
     userRepo.findByEmail(email)
       .then(user => {
-        if (!user || !user.active) {
+        if (!user || !user.active) {
           return done(null, false, { message: 'Väärä sähköpostiosoite' });
         }
 
@@ -125,17 +124,12 @@ export function configureMiddleware(app, connectionString, cookieSecret) {
             ? done(null, user)
             : done(null, false, { message: 'Väärä salasana' }),
             err => done(err));
-      }, err => done(err));
-  });
+      }, err => done(err))
+  );
 
   passport.use(localStrategy);
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-  passport.deserializeUser(function(id, done) {
-    userRepo.findById(id)
-      .asCallback(done);
-  });
+  passport.serializeUser((user, done) => done(null, user.id));
+  passport.deserializeUser((id, done) => userRepo.findById(id).asCallback(done));
 
   app.use(methodOverride('_method'));
   app.use(session(sessionConfiguration));

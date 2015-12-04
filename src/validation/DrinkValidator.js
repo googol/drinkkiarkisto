@@ -1,10 +1,10 @@
-import Promise from 'bluebird'
-import { ValidationError } from './ValidationError'
+import Promise from 'bluebird';
+import { ValidationError } from './ValidationError';
 
 export class DrinkValidator {
   validate(drink, returnTo) {
     return Promise.try(() => {
-      let errorMessages = {};
+      const errorMessages = {};
 
       if (!drink.primaryName) {
         errorMessages.primaryName = 'Drinkin nimi ei saa olla tyhjä.';
@@ -17,12 +17,12 @@ export class DrinkValidator {
       }
 
       if (drink.ingredients) {
-        let ingredientErrors = {};
+        const ingredientErrors = {};
 
         drink.ingredients.forEach(ingredient => {
           if (!ingredient.id) {
             ingredientErrors.general = 'Kaikkien ainesosien id tulee määritellä';
-          } else if (!Number.isInteger(ingredient.amount) || (ingredient.amount < 0)) {
+          } else if (!Number.isInteger(ingredient.amount) || (ingredient.amount < 0)) {
             ingredientErrors[ingredient.id] = 'Ainesosan määrän tulee olla positiivinen kokonaisluku.';
           }
         });

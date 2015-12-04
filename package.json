@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "start": "node .",
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "eslint --ext js src",
     "build-doc": "scripts/build-docs.sh",
     "sql": "scripts/run-sql.sh"
   },
@@ -53,5 +53,10 @@
       "syntax-function-bind",
       "transform-function-bind"
     ]
+  },
+  "devDependencies": {
+    "babel-eslint": "^5.0.0-beta4",
+    "eslint": "^1.10.3",
+    "eslint-plugin-react": "^3.11.2"
   }
 }

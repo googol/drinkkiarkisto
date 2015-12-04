@@ -1,5 +1,4 @@
-import { usingConnect, sql } from './pg-helpers'
-import Promise from 'bluebird'
+import { usingConnect, sql } from './pg-helpers';
 
 function mapDrinkTypes(drinkType) {
   return { id: drinkType.id, name: drinkType.name, used: drinkType.numberofuses > 0 };

@@ -1,4 +1,4 @@
-import { render, setLocals, created, deleted, updated } from './helpers'
+import { render, setLocals, created, deleted, updated } from './helpers';
 
 export class UsersController {
   constructor(userRepo) {

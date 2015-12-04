@@ -1,8 +1,9 @@
 import express from 'express';
-import passport from 'passport'
-import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserRepository } from './data';
-import { DrinksController, DrinkTypesController, IngredientsController, ProfileController, UsersController } from './controllers'
-import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory, urlencodedParser, getDrinkFromRequestBody } from './middleware'
+import passport from 'passport';
+import path from 'path';
+import { DrinkRepository, DrinkTypeRepository, IngredientRepository, UserRepository } from './data';
+import { DrinksController, DrinkTypesController, IngredientsController, ProfileController, UsersController } from './controllers';
+import { requireUser, requireAdmin, requireUserOrLoginFactory, requireAdminOrLoginFactory, urlencodedParser, getDrinkFromRequestBody } from './middleware';
 
 function ifHasQueryParam(param, then, otherwise) {
   return (req, res, next) => req.query[param] !== undefined
@@ -82,5 +83,5 @@ export function configureRoutes(app, connectionString) {
     .post(requireUser, urlencodedParser, ::profileController.updatePassword)
     .delete(requireUser, ::profileController.deleteProfile);
 
-  app.use('/', express.static(__dirname + '/../public'));
+  app.use('/', express.static(path.join(__dirname, '..', 'public')));
 }

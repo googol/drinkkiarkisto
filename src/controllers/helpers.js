@@ -1,4 +1,4 @@
-import Promise from 'bluebird'
+import Promise from 'bluebird';
 
 export const render = Promise.method((res, view) => {
   res.render(view, res.locals);
