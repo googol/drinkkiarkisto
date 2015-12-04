@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "5.0.0"
 after_success:
-  - mkdir public
   - npm run bundle
   - npm run build-doc
 notifications:

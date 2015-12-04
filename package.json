@@ -11,7 +11,6 @@
     "test": "eslint --ext js --ext jsx src",
     "build-doc": "scripts/build-docs.sh",
     "bundle": "scripts/bundle.sh",
-    "bundle-watch": "scripts/bundle.sh watch",
     "sql": "scripts/run-sql.sh"
   },
   "repository": {

@@ -8,5 +8,6 @@ if [[ "$1" == "watch" ]]; then
   BROWSERIFY_OPTS="$BROWSERIFY_OPTS -v --poll 1000"
 fi
 
+mkdir public
 "$COMMAND" "$ENTRY_POINT" $BROWSERIFY_OPTS
 exit 0
