@@ -13,17 +13,19 @@ function main({ DOM, history }) {
 }
 
 function getExternalLinkClicks(DOM) {
-  return DOM.select('a')
-    .events('click')
+  return getLinkClicks(DOM)
     .do(event => { event.preventDefault(); event.stopPropagation(); })
     .map(event => event.target.href);
 }
 
 function getInternalLinkClicks(DOM) {
-  return DOM.select('a')
-    .events('click')
+  return getLinkClicks(DOM)
     .filter(filterLinks)
     .map(event => event.target.pathname);
+}
+
+function getLinkClicks(DOM) {
+  return DOM.select('a[rel=external]').events('click');
 }
 
 const drivers = {
