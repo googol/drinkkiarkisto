@@ -1,15 +1,12 @@
 /** @jsx hJSX */
 import { hJSX } from '@cycle/dom';
-
-function formatAction(action, method) {
-  return (method === 'get' || method === 'post') && `${action}?_method=${method}` || action;
-}
+import { formatAction, formatMethod } from './helpers';
 
 export function renderDrinkForm(title, action, method, drink, drinkTypes, ingredients) {
   return (
     <div>
       <h1>{ title }</h1>
-      <form action={ formatAction(action, method) } method={ method } className="form-horizontal">
+      <form action={ formatAction(action, method) } method={ formatMethod(method) } className="form-horizontal">
         <div className="form-group">
           <label htmlFor="drinkName" className="col-sm-2 control-label">Drinkin nimi</label>
           <div className="col-sm-8">
