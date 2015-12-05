@@ -11,12 +11,17 @@ function main({ DOM, history }) {
     .do(event => { event.preventDefault(); event.stopPropagation(); })
     .map(event => event.target.href);
 
-  const internalLinkClick$ = DOM.select('a').events('click').filter(filterLinks);
-
   return {
     externalLink: externalLinkClick$,
-    history: internalLinkClick$,
+    history: getInternalLinkClicks(DOM),
   };
+}
+
+function getInternalLinkClicks(DOM) {
+  return DOM.select('a')
+    .events('click')
+    .filter(filterLinks)
+    .map(event => event.target.pathname);
 }
 
 const drivers = {
