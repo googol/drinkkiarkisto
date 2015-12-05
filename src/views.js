@@ -7,3 +7,4 @@ export { renderDrinkTypeList } from './views/drinkTypeList';
 export { renderIngredientList } from './views/ingredientList';
 export { renderLogin } from './views/login';
 export { renderProfile } from './views/profile';
+export { renderRegistration } from './views/register';
