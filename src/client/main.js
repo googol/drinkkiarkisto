@@ -6,15 +6,17 @@ import switchPath from 'switch-path';
 import makeExternalLinkDriver from './externalLinkDriver';
 
 function main({ DOM, history }) {
-  const externalLinkClick$ = DOM.select('a[rel=external]')
+  return {
+    externalLink: getExternalLinkClicks(DOM),
+    history: getInternalLinkClicks(DOM),
+  };
+}
+
+function getExternalLinkClicks(DOM) {
+  return DOM.select('a')
     .events('click')
     .do(event => { event.preventDefault(); event.stopPropagation(); })
     .map(event => event.target.href);
-
-  return {
-    externalLink: externalLinkClick$,
-    history: getInternalLinkClicks(DOM),
-  };
 }
 
 function getInternalLinkClicks(DOM) {
