@@ -1,5 +1,4 @@
 import express from 'express';
-import path from 'path';
 import { configureRoutes } from './routes';
 import { configureMiddleware } from './middleware';
 import { configureValidationErrorHandling } from './validation';
@@ -9,9 +8,6 @@ const connectionString = process.env.DATABASE_URL;
 const cookieSecret = 'keyboard cat';
 
 app.set('port', process.env.PORT || 3000);
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 configureMiddleware(app, connectionString, cookieSecret);
 configureRoutes(app, connectionString);
