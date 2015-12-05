@@ -1,7 +1,8 @@
 import Promise from 'bluebird';
 
 export const render = Promise.method((res, view) => {
-  res.render(view, res.locals);
+  res.json(res.locals);
+  //res.render(view, res.locals);
 });
 
 export function setLocals(res, object) {
