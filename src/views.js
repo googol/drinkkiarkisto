@@ -8,3 +8,4 @@ export { renderIngredientList } from './views/ingredientList';
 export { renderLogin } from './views/login';
 export { renderProfile } from './views/profile';
 export { renderRegistration } from './views/register';
+export { renderUserList } from './views/register';
