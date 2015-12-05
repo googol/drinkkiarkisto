@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import Cycle from '@cycle/core';
 import CycleDOM from '@cycle/dom';
 import { Observable } from 'rx';
