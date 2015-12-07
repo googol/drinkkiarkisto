@@ -7,12 +7,15 @@ import { Observable, BehaviorSubject } from 'rx';
 import switchPath from 'switch-path';
 import makeExternalLinkDriver from './externalLinkDriver';
 import { renderApp, renderDrinkList, renderHeader } from '../views';
+import { request, getReceive } from './httpHelpers';
 
 function main({ DOM, history, http }) {
+  const receive = getReceive(http);
+
   const navigationIntent = navigationIntents(history);
 
   const drinkListModel$ = navigationIntent.drinkList$
-    .map(() => http.filter(response => response.request.url === '/' && response.request.method === 'GET'))
+    .map(() => receive.drinks.all())
     .switch()
     .flatMap(response$ => response$)
     .map(response => response.body.drinks);
@@ -34,7 +37,7 @@ function main({ DOM, history, http }) {
     getInternalLinkClicks(DOM),
     navigationIntent.redirectTo$.map(param => param.path));
 
-  const request$ = navigationIntent.drinkList$.map(() => ({ url: '/', method: 'GET', accept: 'application/json' }));
+  const request$ = navigationIntent.drinkList$.map(() => request.drinks.all());
 
   return {
     DOM: view$,
