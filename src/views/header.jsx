@@ -5,7 +5,7 @@ function getUserProfileLink(user) {
   if (user) {
     return <li><p className="navbar-text">Kirjautunut sisään käyttäjänä: <a href="/profile" className="navbar-link">{ user.email }</a></p></li>;
   } else {
-    return <li><a href="/register">Kirjaudu ulos</a></li>;
+    return <li><a href="/register">Rekisteröidy</a></li>;
   }
 }
 
