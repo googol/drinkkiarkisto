@@ -13,13 +13,22 @@ export function setLocals(res, object) {
 }
 
 export function created(res, hrefToCreated) {
-  res.redirect(hrefToCreated);
+  res.format({
+    'text/html': () => res.redirect(hrefToCreated),
+    'default': () => res.status(201).set('Location', hrefToCreated).end(),
+  });
 }
 
 export function updated(res, hrefToUpdated) {
-  res.redirect(hrefToUpdated);
+  res.format({
+    'text/html': () => res.redirect(hrefToUpdated),
+    'default': () => res.status(200).set('Location', hrefToUpdated).end(),
+  });
 }
 
 export function deleted(res, returnTo) {
-  res.redirect(returnTo);
+  res.format({
+    'text/html': () => res.redirect(returnTo),
+    'default': () => res.status(204).end(),
+  });
 }
