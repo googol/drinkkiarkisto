@@ -80,7 +80,7 @@ function navigationIntents(history) {
         '/:drinkId': drinkId => location.query.edit && createRoute(routes.drinkEdit, { drinkId }) || createRoute(routes.drinkSingle, { drinkId }),
       },
       '/ingredients': createRoute(routes.ingredientList),
-      '/drinkTypes': createRoute(routes.drinkTypeList),
+      '/drinktypes': createRoute(routes.drinkTypeList),
       '/users': createRoute(routes.userList),
       '/register': createRoute(routes.registration),
       '/login': createRoute(routes.login),
