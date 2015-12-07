@@ -5,7 +5,7 @@ import { makeHistoryDriver, filterLinks } from '@cycle/history';
 import { makeHTTPDriver } from '@cycle/http';
 import { Observable } from 'rx';
 import makeExternalLinkDriver from './externalLinkDriver';
-import { renderApp, renderDrinkList, renderHeader } from '../views';
+import { getView } from '../views';
 import { request, getReceive } from './httpHelpers';
 import { navigationIntents } from './intent';
 import { getModel } from './model';
@@ -16,9 +16,7 @@ function main({ DOM, history, http }) {
   const navigationIntent = navigationIntents(history);
   const model = getModel(navigationIntents, receive);
 
-  const drinkListView$ = Observable.combineLatest(model.drinkList$, model.user$, (drinks, user) => renderDrinkList(drinks, user));
-  const headerView$ = Observable.combineLatest(model.user$, model.query$, (user, query) => renderHeader(user, query));
-  const view$ = Observable.combineLatest(headerView$, drinkListView$, model.flash$, (header, content, flashes) => renderApp(header, content, flashes.successes, flashes.errors));
+  const view$ = getView(model);
 
   const navigateTo$ = Observable.merge(
     getInternalLinkClicks(DOM),
