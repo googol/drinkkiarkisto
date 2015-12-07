@@ -1,8 +1,11 @@
 import Promise from 'bluebird';
+import path from 'path';
 
 export const render = Promise.method((res, view) => {
-  res.json(res.locals);
-  //res.render(view, res.locals);
+  res.format({
+    'text/html': () => res.sendFile(path.join(__dirname, '..', 'views', 'index.html')),
+    'application/json': () => res.json(res.locals),
+  });
 });
 
 export function setLocals(res, object) {

@@ -1,4 +1,3 @@
-import path from 'path';
 import methodOverride from 'method-override';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
@@ -10,16 +9,6 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { UserRepository } from './data';
 
 export const urlencodedParser = bodyparser.urlencoded({ extended: false });
-
-export function renderFrontend(req, res, next) {
-  if (req.accepts('text/html')) {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
-  } else if (!req.accepts('application/json')) {
-    res.sendStatus(406);
-  } else {
-    next();
-  }
-}
 
 export function requireUser(req, res, next) {
   if (req.user) {
