@@ -14,24 +14,24 @@ function main({ DOM, history, http }) {
 
   const navigationIntent = navigationIntents(history);
 
-  const drinkListModel$ = navigationIntent.drinkList$
-    .map(() => receive.drinks.all())
-    .switch()
-    .flatMap(response$ => response$)
-    .map(response => response.body.drinks);
+  const model = {
+    drinkList$: navigationIntent.drinkList$
+      .map(() => receive.drinks.all())
+      .switch()
+      .flatMap(response$ => response$)
+      .map(response => response.body.drinks),
+    flash$: http
+      .flatMap(response$ => response$)
+      .filter(response => response.body.successes || response.body.errors)
+      .map(response => ({ successes: response.body.successes, errors: response.body.errors }))
+      .startWith({ successes: [], errors: [] }),
+    query$: new BehaviorSubject(''),
+    user$: new BehaviorSubject(null),
+  };
 
-  const flashModel$ = http
-    .flatMap(response$ => response$)
-    .filter(response => response.body.successes || response.body.errors)
-    .map(response => ({ successes: response.body.successes, errors: response.body.errors }))
-    .startWith({ successes: [], errors: [] });
-
-  const queryModel$ = new BehaviorSubject('');
-  const userModel$ = new BehaviorSubject(null);
-
-  const drinkListView$ = Observable.combineLatest(drinkListModel$, userModel$, (drinks, user) => renderDrinkList(drinks, user));
-  const headerView$ = Observable.combineLatest(userModel$, queryModel$, (user, query) => renderHeader(user, query));
-  const view$ = Observable.combineLatest(headerView$, drinkListView$, flashModel$, (header, content, flashes) => renderApp(header, content, flashes.successes, flashes.errors));
+  const drinkListView$ = Observable.combineLatest(model.drinkList$, model.user$, (drinks, user) => renderDrinkList(drinks, user));
+  const headerView$ = Observable.combineLatest(model.user$, model.query$, (user, query) => renderHeader(user, query));
+  const view$ = Observable.combineLatest(headerView$, drinkListView$, model.flash$, (header, content, flashes) => renderApp(header, content, flashes.successes, flashes.errors));
 
   const navigateTo$ = Observable.merge(
     getInternalLinkClicks(DOM),
