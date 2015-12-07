@@ -14,7 +14,7 @@ function main({ DOM, history, http }) {
   const receive = getReceive(http);
 
   const navigationIntent = navigationIntents(history);
-  const model = getModel(navigationIntents, receive);
+  const model = getModel(navigationIntent, receive);
 
   const view$ = getView(model);
 
