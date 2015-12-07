@@ -110,5 +110,6 @@ export function getReceive(http) {
       new: () => receivePost('/drinktypes'),
       delete: drinkTypeId => receiveDelete(`/drinktypes/${drinkTypeId}/`),
     },
+    any: http,
   };
 }
