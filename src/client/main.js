@@ -34,6 +34,7 @@ function main({ DOM, history, http }) {
 
 function getExternalLinkClicks(DOM) {
   return getLinkClicks(DOM)
+    .filter(event => event.target.rel === 'external')
     .do(event => { event.preventDefault(); event.stopPropagation(); })
     .map(event => event.target.href);
 }
@@ -45,7 +46,7 @@ function getInternalLinkClicks(DOM) {
 }
 
 function getLinkClicks(DOM) {
-  return DOM.select('a[rel=external]').events('click');
+  return DOM.select('a').events('click');
 }
 
 const drivers = {
