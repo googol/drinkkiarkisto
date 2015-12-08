@@ -22,7 +22,10 @@ function main({ DOM, history, http }) {
     getInternalLinkClicks(DOM),
     model.redirectTo$);
 
-  const request$ = navigationIntent.drinkList$.map(() => request.drinks.all());
+  const request$ = Observable.merge(
+    navigationIntent.drinkList$.map(() => request.drinks.all()),
+    navigationIntent.drink$.map(({ drinkId }) => request.drinks.single(drinkId))
+  );
 
   return {
     DOM: view$,

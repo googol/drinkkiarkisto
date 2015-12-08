@@ -2,6 +2,7 @@ import { Observable } from 'rx';
 import { renderHeader } from './views/header';
 import { renderApp } from './views/app';
 import { renderDrinkList } from './views/drinkList';
+import { renderDrink } from './views/drink';
 
 export function getView(model) {
   const drinkListView$ = Observable.combineLatest(
@@ -9,13 +10,19 @@ export function getView(model) {
     model.user$,
     (drinks, user) => renderDrinkList(drinks, user));
 
+  const drinkView$ = Observable.combineLatest(
+    model.drink$,
+    model.user$,
+    (drink, user) => renderDrink(drink, user));
+
   const headerView$ = Observable.combineLatest(
     model.user$,
     model.query$,
     (user, query) => renderHeader(user, query));
 
   const content$ = Observable.merge(
-    drinkListView$
+    drinkListView$,
+    drinkView$
   );
 
   return Observable.combineLatest(
