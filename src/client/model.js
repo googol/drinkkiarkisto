@@ -7,6 +7,7 @@ export function getModel(navigationIntent, receive) {
       .switch()
       .flatMap(response$ => response$)
       .map(response => response.body.drinks),
+
     flash$: receive.any
       .flatMap(response$ => response$)
       .filter(response => response.body.successes || response.body.errors)
@@ -14,5 +15,6 @@ export function getModel(navigationIntent, receive) {
       .startWith({ successes: [], errors: [] }),
     query$: new BehaviorSubject(''),
     user$: new BehaviorSubject(null),
+    redirectTo$: navigationIntent.redirectTo$.map(param => param.path),
   };
 }

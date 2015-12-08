@@ -20,7 +20,7 @@ function main({ DOM, history, http }) {
 
   const navigateTo$ = Observable.merge(
     getInternalLinkClicks(DOM),
-    navigationIntent.redirectTo$.map(param => param.path));
+    model.redirectTo$);
 
   const request$ = navigationIntent.drinkList$.map(() => request.drinks.all());
 
