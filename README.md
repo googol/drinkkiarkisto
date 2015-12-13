@@ -15,7 +15,7 @@ Demoinstanssilla on kaksi käyttäjää valmiina: admin@example.com ja user@exam
 Dokumentaatio kootaan [dokumentaatio.pdf-tiedostoon demoinstanssissa](https://peaceful-scrubland-8625.herokuapp.com/doc/documentation.pdf)
 
 ## Kehitysympäristö
-Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sekä virtualbox, ja aja `vagrant up` projektikansiossa. Tämä luo virtuaalikoneen jossa voit ajaa ohjelmaa. Komennolla `vagrant ssh` saat yhteyden virtuaalikoneeseen, jossa voit komennolla `npm start` käynnistää serverin. Serveri on tavoitettavissa osoittessa http://localhost:3000/ niin virtuaalikoneella kuin hostilla.
+Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sekä virtualbox, ja aja `vagrant up` projektikansiossa. Tämä luo virtuaalikoneen jossa voit ajaa ohjelmaa. Komennolla `vagrant ssh` saat yhteyden virtuaalikoneeseen, jossa voit komennolla `npm start` käynnistää serverin. Serveri on tavoitettavissa osoittessa http://localhost:3000/ niin virtuaalikoneella kuin hostilla. Jotta selainjavascript toimisi, on ennen serverin käynnistystä ajettava `npm run bundle` joka kääntää selaimelle sopivan javascript-paketin. Kehityksessä voi käyttää `npm run bundle watch`-komentoa joka kääntää automaattisesti paketin kun lähdekoodiin tallennetaan muutoksia.
 
 ## Koodin rakenne
 - .editorconfig
