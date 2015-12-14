@@ -1,18 +1,15 @@
 language: node_js
 node_js:
   - "5.0.0"
+before_script:
+  - vagrant/install-latex.sh "$TRAVIS_BUILD_DIR"
+  - export PATH="$HOME/tools/texlive/bin/x86_64-linux:$PATH"
 after_success:
   - mkdir public
   - npm run bundle
   - npm run build-doc
 notifications:
   email: false
-addons:
-  apt:
-    packages:
-      - texlive-latex-recommended
-      - texlive-fonts-recommended
-      - texlive-lang-finnish
 deploy:
   provider: heroku
   skip_cleanup: true
