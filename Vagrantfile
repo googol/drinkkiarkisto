@@ -12,7 +12,7 @@ SCRIPT
 # Installs absolute minimun for building/running
 $install_packages = <<SCRIPT
 curl --silent --location https://deb.nodesource.com/setup_5.x | sudo bash -
-apt-get install --no-install-recommends -y build-essential git postgresql nodejs texlive-latex-recommended texlive-fonts-recommended texlive-lang-european
+apt-get install --no-install-recommends -y build-essential git postgresql nodejs
 
 npm install -g npm || exit 1
 SCRIPT
@@ -60,6 +60,8 @@ export_env_if_unset "DATABASE_URL" "postgres://vagrant:vagrant@localhost/vagrant
 if [ $(pwd) != "/vagrant" ]; then
   echo "cd /vagrant" >> "$profile_dir"
 fi
+
+echo "export PATH=\"/home/vagrant/tools/texlive/bin/x86_64-linux:\$PATH\"" >> "$profile_dir"
 SCRIPT
 
 # Finally install npm dependencies and setup development database.
@@ -93,6 +95,11 @@ Vagrant.configure(2) do |config|
   # Run provisioning scripts in this order.
   config.vm.provision "shell", inline: $generate_locales
   config.vm.provision "shell", inline: $install_packages
+  config.vm.provision "shell" do |s|
+    s.privileged = false
+    s.path = "vagrant/install-latex.sh"
+    s.args = ["/vagrant"]
+  end
   config.vm.provision "shell", inline: $configure_postgres
   config.vm.provision "shell", inline: $ensure_permissions
   # environment setup, npm installations and project setup need to be run
