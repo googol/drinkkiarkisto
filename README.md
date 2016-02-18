@@ -1,6 +1,8 @@
 # drinkkiarkisto [![Build Status](https://travis-ci.org/googol/drinkkiarkisto.svg?branch=master)](https://travis-ci.org/googol/drinkkiarkisto) [![Dependency Status](https://david-dm.org/googol/drinkkiarkisto.svg)](https://david-dm.org/googol/drinkkiarkisto) [![Heroku](https://heroku-badge.herokuapp.com/?app=peaceful-scrubland-8625)](https://peaceful-scrubland-8625.herokuapp.com/)
 
-Tietokantasovellus-kurssin harjoitustyö
+Yksinkertainen web-sovellus drinkkireseptien tallentamiseen ja etsimiseen.
+
+Tehty alunperin Helsingin Yliopiston tietojenkäsittelytieteiden Tietokantasovellus-kurssin harjoitustyönä.
 
 ## Tehtävänanto
 Tämä harjoitustyö perustuu valmiiseen drinkkiarkisto-aiheeseen. Aiheen kuvaus: http://advancedkittenry.github.io/suunnittelu_ja_tyoymparisto/aiheet/Drinkkiarkisto.html
@@ -16,9 +18,9 @@ Ohjelmiston kehitysympäristönä voit käyttää vagrantia. Asenna vagrant sek�
 
 ## Koodin rakenne
 - .editorconfig
-  - Tekstieditorien asetuksia tälle projektille. Katso: \url{http://editorconfig.org/}
+  - Tekstieditorien asetuksia tälle projektille. Katso: http://editorconfig.org/
 - .travis.yml
-  - Travis CI -konfiguraatio automaattisille buildeille. Katso: \url{https://travis-ci.org/}
+  - Travis CI -konfiguraatio automaattisille buildeille. Katso: https://travis-ci.org/
 - Vagrantfile
   - Vagrant-kehitysympäristön konfiguraatio
 - bootstrap.js
